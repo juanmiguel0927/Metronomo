@@ -20,10 +20,9 @@
 
         .beat-tab { transition: all 0.2s; }
         .beat-tab.active { background-color: #3b82f6; color: white; border-color: #2563eb; transform: scale(1.05); }
-        .beat-tab.playing { box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); border-color: #60a5fa; }
 
         /* Pistas rediseñadas como pestañas de la partitura */
-        .track-tab { transition: all 0.2s; border-bottom: 2px solid transparent; }
+        .track-tab { transition: all 0.2s; border-bottom: 2px solid transparent; cursor: pointer; }
         .track-tab.active-a { background-color: #1e293b; color: white; border-color: #3b82f6; }
         .track-tab.active-b { background-color: #064e3b; color: white; border-color: #10b981; }
 
@@ -34,7 +33,8 @@
         .step-tie { background-color: #8b5cf6; border-color: #6d28d9; color: white; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.2); } 
         .step-rest { background-color: #f1f5f9; border-color: #cbd5e1; color: #94a3b8; }
 
-        .base-btn.active { background-color: #0f172a; color: white; border-color: #0f172a; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .base-btn { transition: all 0.15s ease; }
+        .base-btn.active { background-color: #0f172a; color: white; border-color: #0f172a; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transform: scale(1.05); }
         
         #notation-svg { height: 180px; display: block; }
         .interactive-note:hover rect { fill: rgba(59, 130, 246, 0.1); }
@@ -42,7 +42,7 @@
 
         .beat-hitbox { fill: transparent; transition: all 0.2s; rx: 8px; }
         .beat-hitbox:hover { fill: rgba(59, 130, 246, 0.05); }
-        .beat-hitbox[data-selected="true"] { fill: rgba(59, 130, 246, 0.1); stroke: rgba(59, 130, 246, 0.3); stroke-width: 2px; }
+        .beat-hitbox[data-selected="true"] { fill: rgba(59, 130, 246, 0.08); stroke: rgba(59, 130, 246, 0.4); stroke-width: 2px; }
 
         .tap-pulse { animation: tapAnim 0.3s ease-out; }
         @keyframes tapAnim {
@@ -89,11 +89,11 @@
                 <div>
                     <h3 class="text-lg font-bold text-blue-600 mb-3 uppercase tracking-wider">Conceptos Core</h3>
                     <ul class="space-y-4">
-                        <li><strong class="text-slate-800">1. Subdivisión Anidada:</strong> El metrónomo permite crear micro-compases dentro de cada pulso. Ej: En base a Corcheas (2 notas), puedes anidar "3" en la primera fracción y "2" en la segunda, creando un Seisillo mixto (3+2).</li>
-                        <li><strong class="text-slate-800">2. Pista B (Polirritmias):</strong> Activa la Pista B para crear una capa rítmica paralela. Mezcla un 5/4 en la Pista A con un 3/4 en la Pista B en el mismo compás. La Pista B suena más grave.</li>
-                        <li><strong class="text-slate-800">3. Inteligencia Konnakol:</strong> El texto se adapta automáticamente a tus acentos. <strong>Clic en el texto en la pauta</strong> para ciclar entre fraseos (Ej. 5 notas pueden cantarse como TaDiGiNaThom, 3+2 o 2+3).</li>
-                        <li><strong class="text-slate-800">4. Edición Visual (Hitboxes):</strong> En la pauta SVG, <strong>clic en el fondo gris</strong> para seleccionar ese tiempo. <strong>Clic en una nota</strong> para cambiar su estado (Acento -> Normal -> Ligadura -> Silencio).</li>
-                        <li><strong class="text-slate-800">5. Entrenador de Silencios:</strong> Al activarlo, el 4to compás siempre estará mudo, forzándote a mantener el tempo internamente.</li>
+                        <li><strong class="text-slate-800">1. Pistas como Pestañas:</strong> Usa los botones superiores (PISTA A / PISTA B) para alternar qué capa estás viendo y editando. La Pista B suena más grave para las polirritmias.</li>
+                        <li><strong class="text-slate-800">2. Subdivisión Anidada:</strong> Selecciona el compás en la parte inferior, define una Base (ej. 2 Corcheas) y luego anida fracciones. Ej: Fracción 1 en "3" y Fracción 2 en "2" crea un seisillo mixto de 3+2.</li>
+                        <li><strong class="text-slate-800">3. Inteligencia Solkattu:</strong> El texto se adapta automáticamente a tus acentos. <strong>Clic en el texto directamente en la pauta</strong> para rotar las sílabas (Ej. 5 notas alternan entre TaDiGiNaThom, 3+2 o 2+3).</li>
+                        <li><strong class="text-slate-800">4. Interfaz Desligada:</strong> La pauta SVG arriba muestra el progreso del metrónomo. El panel inferior es exclusivo para <strong>edición estática</strong> para que no pierdas tu selección mientras suena el metrónomo.</li>
+                        <li><strong class="text-slate-800">5. Entrenador de Silencios:</strong> Al activarlo, el 4to compás siempre estará mudo, forzándote a mantener el pulso internamente.</li>
                     </ul>
                 </div>
                 
@@ -108,8 +108,9 @@
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">A</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">B</kbd></td><td class="py-2">Alternar Pista A / Pista B</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">F</kbd></td><td class="py-2">Toggle Flash Visual</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">E</kbd></td><td class="py-2">Toggle Entrenador Silencios</td></tr>
+                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">S</kbd></td><td class="py-2">Mostrar/Ocultar Solkattu</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↑</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↓</kbd></td><td class="py-2">Subir/Bajar BPM (+1 / -1)</td></tr>
-                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">←</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">→</kbd></td><td class="py-2">Navegar entre Tiempos</td></tr>
+                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">←</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">→</kbd></td><td class="py-2">Navegar panel de edición</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -120,41 +121,44 @@
     <div class="w-full max-w-7xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-300 relative z-10">
         
         <div class="absolute top-4 right-4 z-20 flex gap-2">
-            <button id="btn-help" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-white transition-colors border border-slate-600 hover:border-slate-400 px-3 py-1 rounded-md bg-slate-800/80 cursor-pointer flex items-center gap-1" title="Ayuda y Atajos (H)">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Ayuda
+            <button id="btn-help" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-white transition-colors border border-slate-600 hover:border-slate-400 px-3 py-1.5 rounded-md bg-slate-800/90 cursor-pointer flex items-center gap-1 shadow" title="Ayuda y Atajos (H)">
+                <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Ayuda
             </button>
-            <button id="btn-reset" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-400 hover:text-red-400 transition-colors border border-slate-700 hover:border-red-400 px-3 py-1 rounded-md bg-slate-800/50 cursor-pointer">
+            <button id="btn-reset" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-red-400 transition-colors border border-slate-600 hover:border-red-400 px-3 py-1.5 rounded-md bg-slate-800/90 cursor-pointer shadow">
                 Reset Sesión
             </button>
         </div>
 
-        <div class="bg-slate-900 text-white p-4 md:p-6 flex flex-col items-center justify-center relative">
-            <h1 class="text-3xl md:text-4xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 uppercase">Metrónomo</h1>
+        <div class="bg-slate-900 text-white p-6 md:p-8 flex flex-col items-center justify-center relative border-b border-slate-800">
+            <h1 class="text-3xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 uppercase drop-shadow-sm">Metrónomo</h1>
         </div>
 
-        <div class="p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 bg-slate-50 w-full overflow-hidden">
+        <div class="p-3 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 bg-slate-50 w-full overflow-hidden">
             
-            <!-- PANEL SUPERIOR: NOTACIÓN FULL WIDTH (Rediseñado) -->
-            <div class="lg:col-span-12 flex flex-col space-y-4 max-w-full">
+            <!-- PANEL SUPERIOR: NOTACIÓN FULL WIDTH -->
+            <div class="lg:col-span-12 flex flex-col max-w-full">
                 
-                <!-- Pistas como Pestañas Integradas -->
-                <div class="flex w-full bg-slate-800 rounded-t-2xl overflow-hidden border border-slate-700 border-b-0">
-                    <button id="track-a-btn" class="track-tab active-a flex-1 py-3 font-bold text-sm tracking-widest uppercase transition-colors text-slate-400 hover:bg-slate-700">PISTA A</button>
-                    <button id="track-b-btn" class="track-tab flex-1 py-3 font-bold text-sm tracking-widest uppercase transition-colors bg-slate-900 text-slate-500 hover:bg-slate-800 relative">
-                        PISTA B <span id="track-b-status" class="ml-2 text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 border border-slate-700">OFF</span>
+                <!-- Pistas como Pestañas Integradas Superiores -->
+                <div class="flex w-full bg-slate-800 rounded-t-xl overflow-hidden border border-slate-700 border-b-0 shadow-sm">
+                    <button id="track-a-btn" class="track-tab active-a flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase text-slate-400 hover:bg-slate-700">PISTA A</button>
+                    <button id="track-b-btn" class="track-tab flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase bg-slate-900 text-slate-500 hover:bg-slate-800 relative">
+                        PISTA B <span id="track-b-status" class="ml-1 md:ml-2 text-[9px] md:text-[10px] bg-slate-800 px-1.5 md:px-2 py-0.5 rounded text-slate-400 border border-slate-700">OFF</span>
                     </button>
                 </div>
 
-                <div class="bg-slate-900 rounded-b-2xl p-4 md:p-6 text-white shadow-[inset_0_4px_10px_rgba(0,0,0,0.5)] relative flex flex-col border border-slate-800 border-t-0 w-full rounded-tr-none rounded-tl-none" id="notation-container">
+                <div class="bg-slate-900 rounded-b-xl p-3 md:p-5 text-white shadow-inner relative flex flex-col border border-slate-800 border-t-0 w-full rounded-tr-none rounded-tl-none" id="notation-container">
                     
-                    <div class="flex justify-end mb-4">
-                        <button id="toggle-view-btn" class="text-[10px] md:text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-wider bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors" title="Modo Foco (M)">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-3 gap-3">
+                        <div>
+                            <h2 class="text-[10px] md:text-xs uppercase tracking-widest text-slate-400 font-bold inline-block">Monitor de Reproducción</h2>
+                        </div>
+                        <button id="toggle-view-btn" class="text-[9px] md:text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-wider bg-slate-800 px-3 py-1.5 rounded-md border border-slate-700 transition-colors w-full sm:w-auto" title="Modo Foco (M)">
                             Modo Foco (Ocultar Pauta)
                         </button>
                     </div>
                     
-                    <div id="svg-wrapper" class="w-full max-w-full bg-slate-50 rounded-xl mb-2 overflow-x-auto overflow-y-hidden border-2 border-slate-700/50 hide-scrollbar scroll-smooth">
-                        <svg id="notation-svg" class="h-[180px] min-w-full">
+                    <div id="svg-wrapper" class="w-full max-w-full bg-slate-50 rounded-lg mb-2 overflow-x-auto overflow-y-hidden border-2 border-slate-700/50 hide-scrollbar scroll-smooth">
+                        <svg id="notation-svg" class="h-[150px] md:h-[180px] min-w-full">
                             <defs>
                                 <g id="n-head">
                                     <ellipse cx="0" cy="0" rx="6" ry="4.5" transform="rotate(-25)" />
@@ -172,125 +176,124 @@
                         </svg>
                     </div>
 
-                    <div id="simple-tracker" class="w-full bg-slate-800 rounded-xl p-4 md:p-8 hidden flex justify-center items-center gap-2 md:gap-4 min-h-[180px] overflow-x-auto hide-scrollbar scroll-smooth">
+                    <div id="simple-tracker" class="w-full bg-slate-800 rounded-lg p-4 md:p-8 hidden flex justify-center items-center gap-2 md:gap-4 min-h-[150px] overflow-x-auto hide-scrollbar scroll-smooth">
                     </div>
                     
-                    <div id="trainer-alert" class="w-full bg-amber-500/20 border border-amber-500/50 text-amber-200 text-[11px] font-bold uppercase tracking-widest text-center py-2 rounded-lg mt-2 hidden transition-all">
+                    <div id="trainer-alert" class="w-full bg-amber-500/20 border border-amber-500/50 text-amber-200 text-[10px] md:text-xs font-bold uppercase tracking-widest text-center py-2 rounded-lg mt-2 hidden transition-all">
                         Entrenador de Silencios: Muteado (Compás 4)
                     </div>
                 </div>
             </div>
 
             <!-- PANEL IZQUIERDO: CONTROLES MAESTROS Y MIXER -->
-            <div class="lg:col-span-4 flex flex-col space-y-4 md:space-y-6">
+            <div class="lg:col-span-4 flex flex-col space-y-4">
                 
-                <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden" id="bpm-container">
+                <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden" id="bpm-container">
                     <div class="flex items-end justify-center space-x-1 mb-2 relative z-10">
-                        <input type="number" id="bpm-input" value="120" min="30" max="300" class="text-6xl md:text-7xl font-black text-slate-800 tabular-nums tracking-tighter bg-transparent w-36 text-center outline-none border-b-4 border-transparent hover:border-slate-200 focus:border-blue-500 transition-colors py-1 cursor-text" title="Haz clic para escribir BPM manual">
-                        <span class="text-lg md:text-xl text-slate-500 font-bold pb-4">BPM</span>
+                        <input type="number" id="bpm-input" value="120" min="30" max="300" class="text-6xl md:text-7xl font-black text-slate-800 tabular-nums tracking-tighter bg-transparent w-32 md:w-36 text-center outline-none border-b-4 border-transparent hover:border-slate-200 focus:border-blue-500 transition-colors py-1 cursor-text" title="Escribir BPM manual">
+                        <span class="text-sm md:text-xl text-slate-500 font-bold pb-2 md:pb-4">BPM</span>
                     </div>
                     
                     <div class="w-full flex items-center space-x-2 md:space-x-3 mt-2 relative z-10">
-                        <button id="btn-minus" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-xl font-bold transition-colors border border-slate-200" title="Bajar BPM (Flecha Abajo)">-</button>
+                        <button id="btn-minus" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-xl font-bold transition-colors border border-slate-200 flex items-center justify-center" title="Bajar BPM (Flecha Abajo)">-</button>
                         <input type="range" id="bpm-slider" min="30" max="300" value="120" class="w-full">
-                        <button id="btn-plus" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-xl font-bold transition-colors border border-slate-200" title="Subir BPM (Flecha Arriba)">+</button>
+                        <button id="btn-plus" class="w-10 h-10 rounded-full bg-slate-100 hover:bg-slate-200 text-xl font-bold transition-colors border border-slate-200 flex items-center justify-center" title="Subir BPM (Flecha Arriba)">+</button>
                     </div>
 
-                    <button id="tap-btn" class="mt-4 md:mt-6 w-full py-3 rounded-xl border-2 border-dashed border-slate-300 text-slate-500 font-bold uppercase tracking-wider hover:border-blue-400 hover:text-blue-600 transition-colors focus:outline-none relative z-10 bg-white/50 backdrop-blur-sm text-sm md:text-base" title="Tap Tempo (T)">
+                    <button id="tap-btn" class="mt-4 md:mt-5 w-full py-2.5 md:py-3 rounded-lg border-2 border-dashed border-slate-300 text-slate-500 font-bold uppercase tracking-wider hover:border-blue-400 hover:text-blue-600 transition-colors focus:outline-none relative z-10 bg-white/50 backdrop-blur-sm text-[11px] md:text-sm" title="Tap Tempo (T)">
                         TAP TEMPO
                     </button>
                 </div>
 
-                <div class="w-full flex justify-between items-center bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-slate-200">
-                    <span class="font-bold text-slate-700 uppercase text-[10px] md:text-xs tracking-widest">Tiempos / Compás</span>
-                    <div class="flex items-center space-x-2 md:space-x-3">
-                        <button id="beats-minus" class="w-8 h-8 rounded-md bg-slate-100 hover:bg-slate-200 font-bold text-lg border border-slate-200">-</button>
-                        <span id="beats-display" class="w-6 md:w-8 text-center font-black text-xl md:text-2xl text-slate-800">4</span>
-                        <button id="beats-plus" class="w-8 h-8 rounded-md bg-slate-100 hover:bg-slate-200 font-bold text-lg border border-slate-200">+</button>
+                <div class="w-full flex justify-between items-center bg-white p-3 md:p-4 rounded-xl shadow-sm border border-slate-200">
+                    <span class="font-bold text-slate-700 uppercase text-[10px] md:text-xs tracking-widest leading-tight">Tiempos<br>Compás</span>
+                    <div class="flex items-center space-x-2">
+                        <button id="beats-minus" class="w-7 h-7 md:w-8 md:h-8 rounded text-slate-600 bg-slate-100 hover:bg-slate-200 font-bold text-base md:text-lg border border-slate-200 flex items-center justify-center">-</button>
+                        <span id="beats-display" class="w-6 md:w-8 text-center font-black text-lg md:text-2xl text-slate-800">4</span>
+                        <button id="beats-plus" class="w-7 h-7 md:w-8 md:h-8 rounded text-slate-600 bg-slate-100 hover:bg-slate-200 font-bold text-base md:text-lg border border-slate-200 flex items-center justify-center">+</button>
                     </div>
                 </div>
 
                 <!-- PANEL DE MEZCLA -->
-                <div class="bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-slate-200 flex flex-col space-y-5">
-                    <span class="font-bold text-slate-400 uppercase text-[10px] tracking-widest border-b border-slate-100 pb-2">Mixer y Práctica</span>
+                <div class="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-slate-200 flex flex-col space-y-4">
+                    <span class="font-bold text-slate-400 uppercase text-[9px] md:text-[10px] tracking-widest border-b border-slate-100 pb-2">Mixer y Preferencias</span>
                     
-                    <div class="space-y-3">
-                        <div class="flex items-center justify-between text-xs">
-                            <span class="font-bold text-red-500 w-16">Acento</span>
+                    <div class="space-y-2 md:space-y-3">
+                        <div class="flex items-center justify-between text-[10px] md:text-xs">
+                            <span class="font-bold text-red-500 w-12 md:w-16">Acento</span>
                             <input type="range" id="vol-accent" min="0" max="100" value="100" class="mixer-slider w-full ml-2">
                         </div>
-                        <div class="flex items-center justify-between text-xs">
-                            <span class="font-bold text-blue-500 w-16">Normal</span>
+                        <div class="flex items-center justify-between text-[10px] md:text-xs">
+                            <span class="font-bold text-blue-500 w-12 md:w-16">Normal</span>
                             <input type="range" id="vol-normal" min="0" max="100" value="70" class="mixer-slider w-full ml-2">
                         </div>
-                        <div class="flex items-center justify-between text-xs">
-                            <span class="font-bold text-slate-500 w-16">Pista B</span>
+                        <div class="flex items-center justify-between text-[10px] md:text-xs">
+                            <span class="font-bold text-slate-500 w-12 md:w-16">Pista B</span>
                             <input type="range" id="vol-trackB" min="0" max="100" value="50" class="mixer-slider w-full ml-2">
                         </div>
                     </div>
 
-                    <div class="flex flex-col space-y-3 pt-2 border-t border-slate-100">
-                        <!-- Solkattu Toggle -->
-                        <div class="flex items-center justify-between" title="Mostrar/Ocultar Solkattu en partitura">
-                            <span class="text-xs font-bold text-slate-600">Mostrar Solkattu</span>
-                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                                <input type="checkbox" id="toggle-solkattu" checked class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-all duration-200"/>
-                                <label for="toggle-solkattu" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-200"></label>
+                    <div class="flex flex-col space-y-2 md:space-y-3 pt-3 border-t border-slate-100">
+                        <div class="flex items-center justify-between" title="Mostrar/Ocultar Solkattu en partitura (S)">
+                            <span class="text-[10px] md:text-xs font-bold text-slate-600">Mostrar Solkattu</span>
+                            <div class="relative inline-block w-8 md:w-10 mr-1 md:mr-2 align-middle select-none">
+                                <input type="checkbox" id="toggle-solkattu" checked class="toggle-checkbox absolute block w-4 h-4 md:w-5 md:h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-all duration-200"/>
+                                <label for="toggle-solkattu" class="toggle-label block overflow-hidden h-4 md:h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-200"></label>
                             </div>
                         </div>
-                        <div class="flex items-center justify-between" title="Toggle Flash (F)">
-                            <span class="text-xs font-bold text-slate-600">Flash Visual (T1)</span>
-                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                                <input type="checkbox" id="toggle-flash" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-all duration-200"/>
-                                <label for="toggle-flash" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-200"></label>
+                        <div class="flex items-center justify-between" title="Toggle Flash Visual en T1 (F)">
+                            <span class="text-[10px] md:text-xs font-bold text-slate-600">Flash Visual (T1)</span>
+                            <div class="relative inline-block w-8 md:w-10 mr-1 md:mr-2 align-middle select-none">
+                                <input type="checkbox" id="toggle-flash" class="toggle-checkbox absolute block w-4 h-4 md:w-5 md:h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-all duration-200"/>
+                                <label for="toggle-flash" class="toggle-label block overflow-hidden h-4 md:h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-200"></label>
                             </div>
                         </div>
-                        <div class="flex items-center justify-between" title="Toggle Entrenador (E)">
-                            <span class="text-xs font-bold text-slate-600">Silenciar compás 4</span>
-                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-                                <input type="checkbox" id="toggle-trainer" class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-all duration-200"/>
-                                <label for="toggle-trainer" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-200"></label>
+                        <div class="flex items-center justify-between" title="Toggle Entrenador de Silencios (E)">
+                            <span class="text-[10px] md:text-xs font-bold text-slate-600">Silenciar compás 4</span>
+                            <div class="relative inline-block w-8 md:w-10 mr-1 md:mr-2 align-middle select-none">
+                                <input type="checkbox" id="toggle-trainer" class="toggle-checkbox absolute block w-4 h-4 md:w-5 md:h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-all duration-200"/>
+                                <label for="toggle-trainer" class="toggle-label block overflow-hidden h-4 md:h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-200"></label>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <button id="play-btn" class="w-full py-4 md:py-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xl md:text-2xl shadow-[0_8px_20px_rgba(37,99,235,0.3)] transition-all transform hover:-translate-y-1 active:translate-y-0 active:shadow-none flex justify-center items-center gap-2 md:gap-3" title="Play/Stop (Espacio)">
+                <button id="play-btn" class="w-full py-5 md:py-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xl md:text-2xl shadow-[0_4px_15px_rgba(37,99,235,0.4)] transition-all transform hover:-translate-y-1 active:translate-y-0 active:shadow-none flex justify-center items-center gap-2 md:gap-3" title="Play/Stop (Espacio)">
                     <svg id="icon-play" class="w-6 h-6 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
                     <svg id="icon-stop" class="w-6 h-6 md:w-8 md:h-8 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"></path></svg>
                     <span id="play-text">INICIAR</span>
                 </button>
             </div>
 
-            <!-- PANEL DERECHO: SECUENCIADOR Y CONSTRUCTOR -->
-            <div class="lg:col-span-8 flex flex-col space-y-4 md:space-y-6 overflow-hidden">
+            <!-- PANEL DERECHO: CONSTRUCTOR / EDICIÓN ESTÁTICA -->
+            <div class="lg:col-span-8 flex flex-col space-y-4 overflow-hidden">
                 
-                <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm max-w-full">
-                    <span class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2 md:mb-3">Tiempos del Compás <span class="lowercase font-normal ml-2 tracking-normal">(Flechas ← →)</span></span>
-                    <div class="flex gap-2 overflow-x-auto pb-2 hide-scrollbar scroll-smooth" id="beat-tabs-container"></div>
+                <div class="bg-white rounded-xl p-3 md:p-4 border border-slate-200 shadow-sm max-w-full">
+                    <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Tiempos del Compás a Editar <span class="lowercase font-normal ml-1 tracking-normal hidden sm:inline">(Flechas ← →)</span></span>
+                    <div class="flex gap-2 overflow-x-auto pb-1 hide-scrollbar scroll-smooth" id="beat-tabs-container"></div>
                 </div>
 
-                <div class="bg-white rounded-2xl p-4 md:p-6 border border-slate-200 shadow-sm flex-grow max-w-full">
-                    <div class="flex justify-between items-center mb-4 md:mb-6">
-                        <span class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest">1. División Base del Tiempo</span>
+                <div class="bg-white rounded-xl p-4 md:p-6 border border-slate-200 shadow-sm flex-grow max-w-full flex flex-col">
+                    <div class="flex justify-between items-center mb-3 md:mb-5">
+                        <span class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-slate-100 pb-1 w-full">1. División Base del Tiempo</span>
                     </div>
                     
-                    <div class="mb-4 md:mb-6 flex flex-wrap gap-1 md:gap-2" id="base-selectors"></div>
+                    <div class="mb-5 md:mb-6 grid grid-cols-2 sm:flex sm:flex-wrap gap-2" id="base-selectors"></div>
 
-                    <div id="nested-subdivision-panel" class="mb-4 md:mb-6 p-3 md:p-4 bg-slate-50 rounded-xl border border-slate-200">
-                        <span class="text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest block mb-2 md:mb-3">2. Subdivisión Anidada</span>
-                        <div class="flex gap-2 md:gap-4 overflow-x-auto pb-2 hide-scrollbar" id="nested-controls-container"></div>
+                    <div id="nested-subdivision-panel" class="mb-5 md:mb-6 p-3 bg-slate-50 rounded-lg border border-slate-200">
+                        <span class="text-[10px] md:text-xs font-bold text-slate-600 uppercase tracking-widest block mb-3">2. Subdivisión Anidada</span>
+                        <div class="flex gap-2 md:gap-3 overflow-x-auto pb-1 hide-scrollbar" id="nested-controls-container"></div>
                     </div>
 
-                    <div>
-                        <span class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest block mb-2 md:mb-3">3. Editar Estado Interno</span>
-                        <div class="flex gap-1 w-full flex-wrap" id="pattern-builder"></div>
+                    <div class="flex-grow">
+                        <span class="text-[10px] md:text-xs font-bold text-slate-400 uppercase tracking-widest block mb-3">3. Editar Estado Interno</span>
+                        <div class="flex gap-1 md:gap-2 w-full flex-wrap" id="pattern-builder"></div>
                         
-                        <div class="flex gap-3 md:gap-5 mt-4 md:mt-5 text-[9px] md:text-xs font-bold text-slate-500 justify-center flex-wrap uppercase tracking-wider">
-                            <span class="flex items-center gap-1 md:gap-2"><div class="w-3 h-3 md:w-4 md:h-4 bg-red-500 rounded-sm shadow-inner"></div> Acento</span>
-                            <span class="flex items-center gap-1 md:gap-2"><div class="w-3 h-3 md:w-4 md:h-4 bg-blue-500 rounded-sm shadow-inner"></div> Normal</span>
-                            <span class="flex items-center gap-1 md:gap-2"><div class="w-3 h-3 md:w-4 md:h-4 bg-purple-500 rounded-sm shadow-inner"></div> Ligadura</span>
-                            <span class="flex items-center gap-1 md:gap-2"><div class="w-3 h-3 md:w-4 md:h-4 bg-slate-100 border border-slate-300 rounded-sm"></div> Silencio</span>
+                        <div class="flex gap-3 mt-5 md:mt-6 text-[9px] md:text-[10px] font-bold text-slate-500 justify-center flex-wrap uppercase tracking-wider bg-slate-50 p-2 rounded border border-slate-100">
+                            <span class="flex items-center gap-1 md:gap-1.5"><div class="w-3 h-3 bg-red-500 rounded-sm shadow-inner"></div> Acento</span>
+                            <span class="flex items-center gap-1 md:gap-1.5"><div class="w-3 h-3 bg-blue-500 rounded-sm shadow-inner"></div> Normal</span>
+                            <span class="flex items-center gap-1 md:gap-1.5"><div class="w-3 h-3 bg-purple-500 rounded-sm shadow-inner"></div> Ligadura</span>
+                            <span class="flex items-center gap-1 md:gap-1.5"><div class="w-3 h-3 bg-slate-100 border border-slate-300 rounded-sm"></div> Silencio</span>
                         </div>
                     </div>
                 </div>
@@ -298,8 +301,8 @@
             </div>
         </div>
 
-        <footer class="text-center py-4 md:py-6 text-slate-500 text-[10px] md:text-sm font-semibold uppercase tracking-widest border-t border-slate-200 mx-4">
-            Diseño y Arquitectura por <span class="text-slate-800 font-bold">Juan Miguel Rios Redondo</span>
+        <footer class="text-center py-4 md:py-5 text-slate-400 text-[9px] md:text-[10px] font-semibold uppercase tracking-widest border-t border-slate-200 bg-slate-50">
+            Diseño y Arquitectura por <span class="text-slate-700 font-bold">Juan Miguel Rios Redondo</span>
         </footer>
     </div>
 
@@ -344,7 +347,7 @@
         }
 
         function saveState() {
-            localStorage.setItem('jmrr_metronome_v11', JSON.stringify({ 
+            localStorage.setItem('jmrr_metronome_v12', JSON.stringify({ 
                 bpm: currentBPM, beats: beatsPerBar, trkA: tracks['A'], trkB: tracks['B'], 
                 enbB: isTrackBEnabled, vAcc: volAccent, vNorm: volNormal, vTB: volTrackB,
                 flash: isFlashOn, trainer: isTrainerOn, solk: isSolkattuOn
@@ -352,7 +355,7 @@
         }
 
         function loadState() {
-            const saved = localStorage.getItem('jmrr_metronome_v11');
+            const saved = localStorage.getItem('jmrr_metronome_v12');
             if (saved) {
                 try {
                     const s = JSON.parse(saved);
@@ -368,7 +371,7 @@
         }
 
         function resetState() { 
-            localStorage.removeItem('jmrr_metronome_v11'); 
+            localStorage.removeItem('jmrr_metronome_v12'); 
             currentBPM = 120; beatsPerBar = 4;
             tracks = { 'A': Array.from({length: 4}, createDefaultBeat), 'B': Array.from({length: 4}, createDefaultBeat) };
             activeEditTrack = 'A'; isTrackBEnabled = false; selectedBeatIndex = 0;
@@ -466,14 +469,14 @@
 
         function updateTrackUI() {
             if (activeEditTrack === 'A') {
-                trackABtn.classList.add('active-a'); trackABtn.classList.remove('text-slate-400', 'bg-slate-700');
+                trackABtn.classList.add('active-a'); trackABtn.classList.remove('text-slate-400', 'bg-slate-800');
                 trackBBtn.classList.remove('active-b'); trackBBtn.classList.add('text-slate-500', 'bg-slate-900');
             } else {
-                trackABtn.classList.remove('active-a'); trackABtn.classList.add('text-slate-400', 'bg-slate-700');
+                trackABtn.classList.remove('active-a'); trackABtn.classList.add('text-slate-400', 'bg-slate-800');
                 trackBBtn.classList.add('active-b'); trackBBtn.classList.remove('text-slate-500', 'bg-slate-900');
             }
             trackBStatus.textContent = isTrackBEnabled ? "ON" : "OFF";
-            trackBStatus.className = isTrackBEnabled ? "ml-2 text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded border border-emerald-400" : "ml-2 text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 border border-slate-700";
+            trackBStatus.className = isTrackBEnabled ? "ml-1 md:ml-2 text-[9px] md:text-[10px] bg-emerald-500 text-white px-1.5 md:px-2 py-0.5 rounded border border-emerald-400" : "ml-1 md:ml-2 text-[9px] md:text-[10px] bg-slate-800 px-1.5 md:px-2 py-0.5 rounded text-slate-400 border border-slate-700";
         }
 
         function changeBeatsPerBar(newCount) {
@@ -497,8 +500,8 @@
                 const themeClass = activeEditTrack === 'A' ? 'bg-blue-500 border-blue-600' : 'bg-emerald-600 border-emerald-700';
                 const bData = activeData[i];
                 let desc = bData.subDivs.length > 0 ? bData.subDivs.join('+') : '1';
-                tab.className = `beat-tab px-3 py-1.5 md:px-4 md:py-2 rounded-xl border-2 font-bold text-[10px] md:text-sm tracking-widest flex-shrink-0 ${i === selectedBeatIndex ? `active text-white ${themeClass}` : 'bg-slate-100 border-slate-300 text-slate-600'}`;
-                tab.innerHTML = `T${i + 1} <span class="block text-[9px] md:text-xs font-normal opacity-75 mt-1">[${desc}]</span>`;
+                tab.className = `beat-tab px-3 py-1.5 md:px-4 md:py-2 rounded-lg border-2 font-bold text-[10px] md:text-xs tracking-widest flex-shrink-0 ${i === selectedBeatIndex ? `active text-white ${themeClass}` : 'bg-slate-100 border-slate-300 text-slate-600'}`;
+                tab.innerHTML = `T${i + 1} <span class="block text-[9px] md:text-[10px] font-normal opacity-75 mt-0.5 md:mt-1">[${desc}]</span>`;
                 tab.id = `beat-tab-${i}`;
                 tab.onclick = () => { selectedBeatIndex = i; updateBeatTabs(); if(!isFocusMode) renderNotation(); };
                 beatTabsContainer.appendChild(tab);
@@ -541,7 +544,7 @@
             nestedControlsContainer.innerHTML = '';
             for (let i = 0; i < beatData.base; i++) {
                 const group = document.createElement('div');
-                group.className = 'flex flex-col items-center bg-white p-2 rounded-lg shadow-sm border border-slate-200 min-w-[60px] md:min-w-[70px]';
+                group.className = 'flex flex-col items-center bg-white p-1.5 md:p-2 rounded shadow-sm border border-slate-200 min-w-[50px] md:min-w-[65px]';
                 const label = document.createElement('span'); label.className = 'text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mb-1'; label.textContent = `Fracción ${i+1}`; group.appendChild(label);
                 const divSelect = document.createElement('select'); divSelect.className = 'bg-slate-100 border border-slate-300 text-slate-700 text-[10px] md:text-xs rounded block w-full p-1 cursor-pointer font-bold outline-none';
                 [1,2,3,4,5,6,7,8].forEach(val => {
@@ -556,8 +559,8 @@
             for (let i = 0; i < beatData.states.length; i++) {
                 const state = beatData.states[i];
                 const block = document.createElement('button');
-                block.className = `step-btn flex-1 rounded-lg border-2 font-bold text-base md:text-xl flex items-center justify-center min-w-[25px] md:min-w-[30px] h-10 md:h-14 ${state===2?'step-accent':(state===1?'step-normal':(state===3?'step-tie':'step-rest'))}`;
-                block.innerHTML = state===2?'>':(state===1?'•':(state===3?'<span class="text-xl md:text-3xl font-light">-</span>':''));
+                block.className = `step-btn flex-1 rounded-lg border-2 font-bold text-sm md:text-xl flex items-center justify-center min-w-[20px] md:min-w-[30px] h-8 md:h-12 ${state===2?'step-accent':(state===1?'step-normal':(state===3?'step-tie':'step-rest'))}`;
+                block.innerHTML = state===2?'>':(state===1?'•':(state===3?'<span class="text-lg md:text-2xl font-light">-</span>':''));
                 block.onclick = () => cycleNoteState(selectedBeatIndex, i);
                 patternBuilderContainer.appendChild(block);
             }
@@ -652,7 +655,7 @@
                 case 'KeyT': triggerTapTempo(); break;
                 case 'KeyM': toggleFocusMode(); break;
                 case 'KeyA': if(activeEditTrack !== 'A') { activeEditTrack = 'A'; updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation(); } break;
-                case 'KeyB': if(activeEditTrack === 'B') isTrackBEnabled = !isTrackBEnabled; else { activeEditTrack = 'B'; if (!isTrackBEnabled) isTrackBEnabled = true; } updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation(); saveState(); break;
+                case 'KeyB': if(activeEditTrack === 'B') { isTrackBEnabled = !isTrackBEnabled; } else { activeEditTrack = 'B'; if (!isTrackBEnabled) isTrackBEnabled = true; } updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation(); saveState(); break;
                 case 'KeyF': toggleFlashEl.checked = !toggleFlashEl.checked; isFlashOn = toggleFlashEl.checked; saveState(); break;
                 case 'KeyE': toggleTrainerEl.checked = !toggleTrainerEl.checked; isTrainerOn = toggleTrainerEl.checked; if(!isTrainerOn) { trainerAlert.classList.add('hidden'); isMutedByTrainer = false; } saveState(); break;
                 case 'KeyS': toggleSolkattuEl.checked = !toggleSolkattuEl.checked; isSolkattuOn = toggleSolkattuEl.checked; if(!isFocusMode) renderNotation(); saveState(); break;
@@ -664,12 +667,6 @@
             }
         });
 
-        function smoothScrollContainer(container, targetEl) {
-            if (!container || !targetEl) return;
-            const targetLeft = targetEl.offsetLeft - (container.clientWidth / 2) + (targetEl.clientWidth / 2);
-            container.scrollTo({ left: targetLeft, behavior: 'smooth' });
-        }
-
         // --- 7. SVG RENDER ---
         function renderNotation() {
             if(isFocusMode) return;
@@ -679,7 +676,7 @@
             let totalNotesInBar = 0;
             activeData.forEach(b => totalNotesInBar += b.states.length);
             
-            const minSpacePerNote = 45; 
+            const minSpacePerNote = window.innerWidth < 768 ? 35 : 45; 
             const computedWidth = Math.max(svgCanvasEl.parentElement.clientWidth, (totalNotesInBar * minSpacePerNote) + 40);
             svgCanvasEl.style.width = computedWidth + 'px';
             
@@ -723,7 +720,7 @@
                         beatNotes.push({ x: startX + (notesInFrac === 1 ? fracWidth*0.4 : i * stepX), state: bData.states[globalNoteIndex], beams: reqBeams, gIdx: globalNoteIndex });
                         globalNoteIndex++;
                     }
-                    if (notesInFrac >= 3) svgHTML += `<text x="${fracOffsetX + (fracWidth/2)}" y="25" font-size="14" font-style="italic" font-weight="bold" font-family="serif" text-anchor="middle" fill="#64748b" class="pointer-events-none">${notesInFrac}</text>`;
+                    if (notesInFrac >= 3) svgHTML += `<text x="${fracOffsetX + (fracWidth/2)}" y="25" font-size="12" font-style="italic" font-weight="bold" font-family="serif" text-anchor="middle" fill="#64748b" class="pointer-events-none md:font-size-14">${notesInFrac}</text>`;
                 }
 
                 let maxBeams = Math.max(...beatNotes.map(n => n.beams), 0);
@@ -738,7 +735,7 @@
                                 let runEnd = i - 1;
                                 if (runStart < runEnd) {
                                     let x1 = beatNotes[runStart].x + 6; let x2 = beatNotes[runEnd].x + 6; let y = beamBaseY + ((lvl - 1) * 8);
-                                    svgHTML += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#0f172a" stroke-width="4" class="pointer-events-none"/>`;
+                                    svgHTML += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#0f172a" stroke-width="3" class="pointer-events-none md:stroke-width-4"/>`;
                                 } else {
                                     let nx = beatNotes[runStart].x + 6; let ny = beamBaseY + ((lvl - 1) * 8);
                                     svgHTML += `<use href="#n-flag" x="${nx}" y="${ny}" class="text-slate-900 pointer-events-none" />`;
@@ -755,9 +752,9 @@
                     
                     if (isSolkattuOn) {
                         const meta = phraseMeta[note.gIdx];
-                        let txtClass = "transition-all duration-75";
+                        let txtClass = "transition-all duration-75 text-[10px] md:text-[12px]";
                         if(meta && meta.optionsCount > 1 && note.state !== 0 && note.state !== 3) txtClass += " interactive-text";
-                        svgHTML += `<text id="svg-konnakol-${b}-${note.gIdx}" x="${note.x}" y="${konnakolY}" font-size="12" font-family="monospace" font-weight="bold" text-anchor="middle" fill="${(note.state === 0 || note.state === 3) ? "#cbd5e1" : "#64748b"}" class="${txtClass}" data-b="${b}" data-start="${meta ? meta.startIndex : 0}">${syllables[note.gIdx]}</text>`;
+                        svgHTML += `<text id="svg-konnakol-${b}-${note.gIdx}" x="${note.x}" y="${konnakolY}" font-family="monospace" font-weight="bold" text-anchor="middle" fill="${(note.state === 0 || note.state === 3) ? "#cbd5e1" : "#64748b"}" class="${txtClass}" data-b="${b}" data-start="${meta ? meta.startIndex : 0}">${syllables[note.gIdx]}</text>`;
                     }
 
                     svgHTML += `<g class="interactive-note cursor-pointer" data-b="${b}" data-i="${note.gIdx}">`;
@@ -905,26 +902,10 @@
                             else fDot.classList.replace('bg-blue-500', 'bg-slate-800');
                         }
                     }
-                    
-                    // Auto-scroll the tabs container
-                    const targetTab = document.getElementById(`beat-tab-${beatNumber}`);
-                    smoothScrollContainer(beatTabsContainer, targetTab);
                 }
 
+                // Desvincular el auto-scroll de la pauta al editar (el fondo indica reproducción)
                 if (track === activeEditTrack && !isFocusMode) {
-                    
-                    // Auto-scroll the SVG
-                    if(globalIdx === 0) {
-                        const targetHitbox = document.querySelector(`.beat-hitbox[data-b="${beatNumber}"]`);
-                        if(targetHitbox) {
-                            // Hitboxes don't have offsetLeft, compute based on beat index
-                            const padX = 20; 
-                            const beatWidth = (svgCanvasEl.clientWidth - (padX * 2)) / beatsPerBar;
-                            const targetLeft = (padX + (beatNumber * beatWidth)) - (svgWrapper.clientWidth / 2) + (beatWidth / 2);
-                            svgWrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
-                        }
-                    }
-
                     document.querySelectorAll('[id^="svg-note-"]').forEach(el => {
                         const parts = el.id.split('-');
                         const b = parseInt(parts[2]); const s = parseInt(parts[3]);
