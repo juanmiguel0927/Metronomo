@@ -22,9 +22,10 @@
         .beat-tab.active { background-color: #3b82f6; color: white; border-color: #2563eb; transform: scale(1.05); }
         .beat-tab.playing { box-shadow: 0 0 15px rgba(59, 130, 246, 0.6); border-color: #60a5fa; }
 
-        .track-btn { transition: all 0.2s; }
-        .track-btn.active-a { background-color: #1e293b; color: white; border-color: #0f172a; }
-        .track-btn.active-b { background-color: #047857; color: white; border-color: #064e3b; }
+        /* Pistas rediseñadas como pestañas de la partitura */
+        .track-tab { transition: all 0.2s; border-bottom: 2px solid transparent; }
+        .track-tab.active-a { background-color: #1e293b; color: white; border-color: #3b82f6; }
+        .track-tab.active-b { background-color: #064e3b; color: white; border-color: #10b981; }
 
         .step-btn { transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1); }
         .step-btn:active { transform: scale(0.92); }
@@ -63,16 +64,11 @@
         .toggle-checkbox:checked { right: 0; border-color: #3b82f6; }
         .toggle-checkbox:checked + .toggle-label { background-color: #3b82f6; }
 
-        /* Esconder flechas del input numérico */
         input[type=number]::-webkit-inner-spin-button, 
         input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type=number] { -moz-appearance: textfield; }
         
-        /* Modal Backdrop */
-        #help-modal-backdrop {
-            background-color: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(4px);
-        }
+        #help-modal-backdrop { background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px); }
     </style>
 </head>
 <body class="bg-slate-200 min-h-screen text-slate-800 font-sans p-2 md:p-8 flex flex-col items-center overflow-x-hidden">
@@ -113,7 +109,7 @@
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">F</kbd></td><td class="py-2">Toggle Flash Visual</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">E</kbd></td><td class="py-2">Toggle Entrenador Silencios</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↑</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↓</kbd></td><td class="py-2">Subir/Bajar BPM (+1 / -1)</td></tr>
-                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">←</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">→</kbd></td><td class="py-2">Navegar entre Tiempos del Compás</td></tr>
+                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">←</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">→</kbd></td><td class="py-2">Navegar entre Tiempos</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -138,22 +134,27 @@
 
         <div class="p-4 md:p-8 grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-8 bg-slate-50 w-full overflow-hidden">
             
-            <!-- PANEL SUPERIOR: NOTACIÓN FULL WIDTH -->
-            <div class="lg:col-span-12 flex flex-col space-y-4 md:space-y-6 max-w-full">
-                <div class="bg-slate-900 rounded-2xl p-4 md:p-6 text-white shadow-[inset_0_4px_10px_rgba(0,0,0,0.5)] relative flex flex-col border border-slate-800 w-full" id="notation-container">
+            <!-- PANEL SUPERIOR: NOTACIÓN FULL WIDTH (Rediseñado) -->
+            <div class="lg:col-span-12 flex flex-col space-y-4 max-w-full">
+                
+                <!-- Pistas como Pestañas Integradas -->
+                <div class="flex w-full bg-slate-800 rounded-t-2xl overflow-hidden border border-slate-700 border-b-0">
+                    <button id="track-a-btn" class="track-tab active-a flex-1 py-3 font-bold text-sm tracking-widest uppercase transition-colors text-slate-400 hover:bg-slate-700">PISTA A</button>
+                    <button id="track-b-btn" class="track-tab flex-1 py-3 font-bold text-sm tracking-widest uppercase transition-colors bg-slate-900 text-slate-500 hover:bg-slate-800 relative">
+                        PISTA B <span id="track-b-status" class="ml-2 text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 border border-slate-700">OFF</span>
+                    </button>
+                </div>
+
+                <div class="bg-slate-900 rounded-b-2xl p-4 md:p-6 text-white shadow-[inset_0_4px_10px_rgba(0,0,0,0.5)] relative flex flex-col border border-slate-800 border-t-0 w-full rounded-tr-none rounded-tl-none" id="notation-container">
                     
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 border-b border-slate-700 pb-3 gap-3">
-                        <div>
-                            <h2 class="text-xs uppercase tracking-widest text-slate-400 font-bold inline-block">Pauta y Solkattu</h2>
-                            <span id="track-indicator" class="text-[10px] font-black uppercase tracking-widest text-slate-300 bg-slate-800 px-2 py-1 rounded border border-slate-700 ml-0 sm:ml-3 mt-2 sm:mt-0 inline-block">Pista A</span>
-                        </div>
-                        <button id="toggle-view-btn" class="text-[10px] md:text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-wider bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors w-full sm:w-auto" title="Modo Foco (M)">
+                    <div class="flex justify-end mb-4">
+                        <button id="toggle-view-btn" class="text-[10px] md:text-xs font-bold text-blue-400 hover:text-blue-300 uppercase tracking-wider bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700 transition-colors" title="Modo Foco (M)">
                             Modo Foco (Ocultar Pauta)
                         </button>
                     </div>
                     
                     <div id="svg-wrapper" class="w-full max-w-full bg-slate-50 rounded-xl mb-2 overflow-x-auto overflow-y-hidden border-2 border-slate-700/50 hide-scrollbar scroll-smooth">
-                        <svg id="notation-svg" class="h-[180px]">
+                        <svg id="notation-svg" class="h-[180px] min-w-full">
                             <defs>
                                 <g id="n-head">
                                     <ellipse cx="0" cy="0" rx="6" ry="4.5" transform="rotate(-25)" />
@@ -171,7 +172,7 @@
                         </svg>
                     </div>
 
-                    <div id="simple-tracker" class="w-full bg-slate-800 rounded-xl p-4 md:p-8 hidden flex justify-center items-center gap-2 md:gap-4 min-h-[180px] overflow-x-auto">
+                    <div id="simple-tracker" class="w-full bg-slate-800 rounded-xl p-4 md:p-8 hidden flex justify-center items-center gap-2 md:gap-4 min-h-[180px] overflow-x-auto hide-scrollbar scroll-smooth">
                     </div>
                     
                     <div id="trainer-alert" class="w-full bg-amber-500/20 border border-amber-500/50 text-amber-200 text-[11px] font-bold uppercase tracking-widest text-center py-2 rounded-lg mt-2 hidden transition-all">
@@ -180,11 +181,10 @@
                 </div>
             </div>
 
-            <!-- PANEL IZQUIERDO: CONTROLES MAESTROS, MIXER Y TRACKS -->
+            <!-- PANEL IZQUIERDO: CONTROLES MAESTROS Y MIXER -->
             <div class="lg:col-span-4 flex flex-col space-y-4 md:space-y-6">
                 
                 <div class="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden" id="bpm-container">
-                    <!-- BPM Manual Input -->
                     <div class="flex items-end justify-center space-x-1 mb-2 relative z-10">
                         <input type="number" id="bpm-input" value="120" min="30" max="300" class="text-6xl md:text-7xl font-black text-slate-800 tabular-nums tracking-tighter bg-transparent w-36 text-center outline-none border-b-4 border-transparent hover:border-slate-200 focus:border-blue-500 transition-colors py-1 cursor-text" title="Haz clic para escribir BPM manual">
                         <span class="text-lg md:text-xl text-slate-500 font-bold pb-4">BPM</span>
@@ -210,11 +210,6 @@
                     </div>
                 </div>
 
-                <div class="w-full bg-slate-100 p-2 rounded-xl border border-slate-200 flex gap-2">
-                    <button id="track-a-btn" class="track-btn active-a flex-1 py-2 md:py-3 rounded-lg font-bold text-[10px] md:text-sm uppercase tracking-widest border border-slate-300 text-slate-600" title="Pista A (Tecla A)">Pista A</button>
-                    <button id="track-b-btn" class="track-btn flex-1 py-2 md:py-3 rounded-lg font-bold text-[10px] md:text-sm uppercase tracking-widest border border-slate-300 text-slate-600 opacity-60" title="Activar Pista B (Tecla B)">Pista B (Off)</button>
-                </div>
-
                 <!-- PANEL DE MEZCLA -->
                 <div class="bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-slate-200 flex flex-col space-y-5">
                     <span class="font-bold text-slate-400 uppercase text-[10px] tracking-widest border-b border-slate-100 pb-2">Mixer y Práctica</span>
@@ -235,6 +230,14 @@
                     </div>
 
                     <div class="flex flex-col space-y-3 pt-2 border-t border-slate-100">
+                        <!-- Solkattu Toggle -->
+                        <div class="flex items-center justify-between" title="Mostrar/Ocultar Solkattu en partitura">
+                            <span class="text-xs font-bold text-slate-600">Mostrar Solkattu</span>
+                            <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
+                                <input type="checkbox" id="toggle-solkattu" checked class="toggle-checkbox absolute block w-5 h-5 rounded-full bg-white border-4 appearance-none cursor-pointer z-10 transition-all duration-200"/>
+                                <label for="toggle-solkattu" class="toggle-label block overflow-hidden h-5 rounded-full bg-slate-300 cursor-pointer transition-colors duration-200"></label>
+                            </div>
+                        </div>
                         <div class="flex items-center justify-between" title="Toggle Flash (F)">
                             <span class="text-xs font-bold text-slate-600">Flash Visual (T1)</span>
                             <div class="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
@@ -301,34 +304,26 @@
     </div>
 
     <script>
-        // --- ESTADO GLOBAL ---
+        // --- 1. GLOBAL STATE ---
         let currentBPM = 120;
         let beatsPerBar = 4;
         let isFocusMode = false;
         
-        let volAccent = 1.0;
-        let volNormal = 0.7;
-        let volTrackB = 0.5;
-        let isFlashOn = false;
-        let isTrainerOn = false;
+        let volAccent = 1.0, volNormal = 0.7, volTrackB = 0.5;
+        let isFlashOn = false, isTrainerOn = false, isSolkattuOn = true;
         let globalBarCount = 0;
         let isMutedByTrainer = false;
 
-        function createDefaultBeat() { 
-            return { base: 1, subDivs: [1], states: [2], syllableVariants: {} }; 
-        }
+        function createDefaultBeat() { return { base: 1, subDivs: [1], states: [2], syllableVariants: {} }; }
 
         let tracks = { 'A': Array.from({length: 4}, createDefaultBeat), 'B': Array.from({length: 4}, createDefaultBeat) };
         let activeEditTrack = 'A'; 
         let isTrackBEnabled = false; 
         let selectedBeatIndex = 0; 
         
-        let audioContext = null;
-        let isPlaying = false;
-        let currentBeat = 0;       
-        let nextBeatTime = 0.0;
-        let timerWorker = null;
+        let audioContext = null, isPlaying = false, currentBeat = 0, nextBeatTime = 0.0, timerWorker = null;
 
+        // --- 2. DICTIONARY ---
         const solkattuDict = {
             1: [ ["Ta"], ["Tha"] ],
             2: [ ["Ta", "Ka"], ["Ta", "Ke"] ],
@@ -340,55 +335,44 @@
             8: [ ["Ta", "Ka", "Di", "Mi", "Ta", "Ka", "Di", "Mi"], ["Ta", "Ka", "Di", "Mi", "Ta", "Ka", "Ju", "Nu"] ]
         };
 
-        // --- WEB WORKER ---
+        // --- 3. INIT & STORAGE ---
         function initWorker() {
             if (timerWorker) return;
-            const workerCode = `
-                let timerID = null;
-                self.onmessage = function(e) {
-                    if (e.data === "start") timerID = setInterval(() => postMessage("tick"), 20);
-                    else if (e.data === "stop") { clearInterval(timerID); timerID = null; }
-                };
-            `;
-            const blob = new Blob([workerCode], {type: 'application/javascript'});
-            timerWorker = new Worker(URL.createObjectURL(blob));
+            const workerCode = `let timerID = null; self.onmessage = function(e) { if (e.data === "start") timerID = setInterval(() => postMessage("tick"), 20); else if (e.data === "stop") { clearInterval(timerID); timerID = null; } };`;
+            timerWorker = new Worker(URL.createObjectURL(new Blob([workerCode], {type: 'application/javascript'})));
             timerWorker.onmessage = function(e) { if (e.data === "tick") scheduler(); };
         }
 
-        // --- MEMORIA LOCAL ---
         function saveState() {
-            localStorage.setItem('jmrr_metronome_v10', JSON.stringify({ 
+            localStorage.setItem('jmrr_metronome_v11', JSON.stringify({ 
                 bpm: currentBPM, beats: beatsPerBar, trkA: tracks['A'], trkB: tracks['B'], 
                 enbB: isTrackBEnabled, vAcc: volAccent, vNorm: volNormal, vTB: volTrackB,
-                flash: isFlashOn, trainer: isTrainerOn
+                flash: isFlashOn, trainer: isTrainerOn, solk: isSolkattuOn
             }));
         }
 
         function loadState() {
-            const saved = localStorage.getItem('jmrr_metronome_v10');
+            const saved = localStorage.getItem('jmrr_metronome_v11');
             if (saved) {
                 try {
                     const s = JSON.parse(saved);
-                    if (s.bpm) currentBPM = s.bpm;
-                    if (s.beats) beatsPerBar = s.beats;
-                    if (s.trkA) tracks['A'] = s.trkA;
-                    if (s.trkB) tracks['B'] = s.trkB;
+                    if (s.bpm) currentBPM = s.bpm; if (s.beats) beatsPerBar = s.beats;
+                    if (s.trkA) tracks['A'] = s.trkA; if (s.trkB) tracks['B'] = s.trkB;
                     if (s.enbB !== undefined) isTrackBEnabled = s.enbB;
-                    if (s.vAcc !== undefined) volAccent = s.vAcc;
-                    if (s.vNorm !== undefined) volNormal = s.vNorm;
+                    if (s.vAcc !== undefined) volAccent = s.vAcc; if (s.vNorm !== undefined) volNormal = s.vNorm;
                     if (s.vTB !== undefined) volTrackB = s.vTB;
-                    if (s.flash !== undefined) isFlashOn = s.flash;
-                    if (s.trainer !== undefined) isTrainerOn = s.trainer;
+                    if (s.flash !== undefined) isFlashOn = s.flash; if (s.trainer !== undefined) isTrainerOn = s.trainer;
+                    if (s.solk !== undefined) isSolkattuOn = s.solk;
                 } catch(e) {}
             }
         }
 
         function resetState() { 
-            localStorage.removeItem('jmrr_metronome_v10'); 
+            localStorage.removeItem('jmrr_metronome_v11'); 
             currentBPM = 120; beatsPerBar = 4;
             tracks = { 'A': Array.from({length: 4}, createDefaultBeat), 'B': Array.from({length: 4}, createDefaultBeat) };
             activeEditTrack = 'A'; isTrackBEnabled = false; selectedBeatIndex = 0;
-            volAccent = 1.0; volNormal = 0.7; volTrackB = 0.5; isFlashOn = false; isTrainerOn = false;
+            volAccent = 1.0; volNormal = 0.7; volTrackB = 0.5; isFlashOn = false; isTrainerOn = false; isSolkattuOn = true;
             
             if(isPlaying) stopMetronome();
 
@@ -400,12 +384,49 @@
             document.getElementById('vol-trackB').value = 50;
             document.getElementById('toggle-flash').checked = false;
             document.getElementById('toggle-trainer').checked = false;
+            document.getElementById('toggle-solkattu').checked = true;
             
             updateTrackUI(); updateBeatTabs(); renderSimpleTracker();
             if(!isFocusMode) renderNotation();
         }
 
-        // --- KONNAKOL ---
+        // --- 4. DOM ELEMENTS ---
+        const bpmInput = document.getElementById('bpm-input');
+        const bpmSlider = document.getElementById('bpm-slider');
+        const tapBtn = document.getElementById('tap-btn');
+        const btnReset = document.getElementById('btn-reset');
+        const btnHelp = document.getElementById('btn-help');
+        const closeHelpBtn = document.getElementById('close-help-btn');
+        const helpModalBackdrop = document.getElementById('help-modal-backdrop');
+        const helpModalContent = document.getElementById('help-modal-content');
+        const bpmContainer = document.getElementById('bpm-container');
+        const playBtn = document.getElementById('play-btn');
+        const playText = document.getElementById('play-text');
+        const iconPlay = document.getElementById('icon-play');
+        const iconStop = document.getElementById('icon-stop');
+        
+        const trackABtn = document.getElementById('track-a-btn');
+        const trackBBtn = document.getElementById('track-b-btn');
+        const trackBStatus = document.getElementById('track-b-status');
+        const beatTabsContainer = document.getElementById('beat-tabs-container');
+        const baseSelectorsContainer = document.getElementById('base-selectors');
+        const nestedControlsContainer = document.getElementById('nested-controls-container');
+        const patternBuilderContainer = document.getElementById('pattern-builder');
+        const svgLayer = document.getElementById('svg-layer'); 
+        const svgCanvasEl = document.getElementById('notation-svg'); 
+        const svgWrapper = document.getElementById('svg-wrapper');
+        const toggleViewBtn = document.getElementById('toggle-view-btn');
+        const simpleTracker = document.getElementById('simple-tracker');
+        const trainerAlert = document.getElementById('trainer-alert');
+
+        const volAccentEl = document.getElementById('vol-accent');
+        const volNormalEl = document.getElementById('vol-normal');
+        const volTrackBEl = document.getElementById('vol-trackB');
+        const toggleFlashEl = document.getElementById('toggle-flash');
+        const toggleTrainerEl = document.getElementById('toggle-trainer');
+        const toggleSolkattuEl = document.getElementById('toggle-solkattu');
+
+        // --- 5. CORE FUNCTIONS ---
         function getSolkattuPhrasing(beatData) {
             const states = beatData.states;
             if(!beatData.syllableVariants) beatData.syllableVariants = {};
@@ -413,9 +434,7 @@
             const syllables = []; const phraseMeta = []; 
             
             let groupStarts = [];
-            for(let i=0; i<states.length; i++) {
-                if(states[i] === 2 || i === 0) groupStarts.push(i);
-            }
+            for(let i=0; i<states.length; i++) if(states[i] === 2 || i === 0) groupStarts.push(i);
 
             for(let a = 0; a < groupStarts.length; a++) {
                 let start = groupStarts[a];
@@ -442,188 +461,45 @@
             const beatData = tracks[activeEditTrack][beatIdx];
             if(!beatData.syllableVariants) beatData.syllableVariants = {};
             beatData.syllableVariants[startIdx] = (beatData.syllableVariants[startIdx] || 0) + 1; 
-            if(!isFocusMode) renderNotation();
-            saveState();
+            if(!isFocusMode) renderNotation(); saveState();
         }
-
-        // --- DOM REFERENCES ---
-        const bpmInput = document.getElementById('bpm-input');
-        const bpmSlider = document.getElementById('bpm-slider');
-        const tapBtn = document.getElementById('tap-btn');
-        const btnReset = document.getElementById('btn-reset');
-        const btnHelp = document.getElementById('btn-help');
-        const closeHelpBtn = document.getElementById('close-help-btn');
-        const helpModalBackdrop = document.getElementById('help-modal-backdrop');
-        const helpModalContent = document.getElementById('help-modal-content');
-        const bpmContainer = document.getElementById('bpm-container');
-        const playBtn = document.getElementById('play-btn');
-        const playText = document.getElementById('play-text');
-        const iconPlay = document.getElementById('icon-play');
-        const iconStop = document.getElementById('icon-stop');
-        
-        const trackABtn = document.getElementById('track-a-btn');
-        const trackBBtn = document.getElementById('track-b-btn');
-        const trackIndicator = document.getElementById('track-indicator');
-        const beatTabsContainer = document.getElementById('beat-tabs-container');
-        const baseSelectorsContainer = document.getElementById('base-selectors');
-        const nestedControlsContainer = document.getElementById('nested-controls-container');
-        const patternBuilderContainer = document.getElementById('pattern-builder');
-        const svgLayer = document.getElementById('svg-layer'); 
-        const svgCanvasEl = document.getElementById('notation-svg'); 
-        const svgWrapper = document.getElementById('svg-wrapper');
-        const toggleViewBtn = document.getElementById('toggle-view-btn');
-        const simpleTracker = document.getElementById('simple-tracker');
-        const trainerAlert = document.getElementById('trainer-alert');
-
-        const volAccentEl = document.getElementById('vol-accent');
-        const volNormalEl = document.getElementById('vol-normal');
-        const volTrackBEl = document.getElementById('vol-trackB');
-        const toggleFlashEl = document.getElementById('toggle-flash');
-        const toggleTrainerEl = document.getElementById('toggle-trainer');
-
-        // --- MODO FOCO Y AYUDA ---
-        function toggleFocusMode() {
-            isFocusMode = !isFocusMode;
-            if (isFocusMode) {
-                svgWrapper.classList.add('hidden');
-                simpleTracker.classList.remove('hidden');
-                toggleViewBtn.textContent = "Mostrar Pauta Detallada";
-                toggleViewBtn.classList.replace('text-blue-400', 'text-amber-400');
-                renderSimpleTracker();
-            } else {
-                svgWrapper.classList.remove('hidden');
-                simpleTracker.classList.add('hidden');
-                toggleViewBtn.textContent = "Modo Foco (Ocultar Pauta)";
-                toggleViewBtn.classList.replace('text-amber-400', 'text-blue-400');
-                renderNotation();
-            }
-        }
-        toggleViewBtn.addEventListener('click', toggleFocusMode);
-
-        function openHelp() {
-            helpModalBackdrop.classList.remove('hidden');
-            // Timeout to allow display:block to apply before animating opacity
-            setTimeout(() => {
-                helpModalBackdrop.classList.remove('opacity-0');
-                helpModalContent.classList.remove('scale-95');
-            }, 10);
-        }
-        function closeHelp() {
-            helpModalBackdrop.classList.add('opacity-0');
-            helpModalContent.classList.add('scale-95');
-            setTimeout(() => { helpModalBackdrop.classList.add('hidden'); }, 300);
-        }
-        btnHelp.addEventListener('click', openHelp);
-        closeHelpBtn.addEventListener('click', closeHelp);
-        helpModalBackdrop.addEventListener('click', (e) => { if(e.target === helpModalBackdrop) closeHelp(); });
-
-        function renderSimpleTracker() {
-            simpleTracker.innerHTML = '';
-            for(let i=0; i<beatsPerBar; i++){
-                const dot = document.createElement('div');
-                dot.className = `w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-full border-4 border-slate-700 bg-slate-800 transition-all duration-100 flex items-center justify-center font-bold text-slate-500`;
-                dot.id = `focus-dot-${i}`;
-                dot.textContent = i+1;
-                simpleTracker.appendChild(dot);
-            }
-        }
-
-        // --- UI INICIAL ---
-        function initUI() {
-            baseSelectorsContainer.innerHTML = '';
-            const labels = ["1 (Negra)", "2 (Corcheas)", "3 (Tresillos)", "4 (Semicor.)"]; 
-            for (let i = 1; i <= 4; i++) {
-                const btn = document.createElement('button');
-                btn.className = `base-btn px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-bold text-[10px] md:text-xs uppercase tracking-wider border-2 border-slate-300 text-slate-500 hover:border-slate-800 hover:text-slate-800`;
-                btn.id = `base-btn-${i}`;
-                btn.textContent = labels[i-1];
-                btn.onclick = () => setBaseForSelectedBeat(i);
-                baseSelectorsContainer.appendChild(btn);
-            }
-
-            bpmInput.value = currentBPM;
-            bpmSlider.value = currentBPM;
-            document.getElementById('beats-display').textContent = beatsPerBar;
-            volAccentEl.value = volAccent * 100;
-            volNormalEl.value = volNormal * 100;
-            volTrackBEl.value = volTrackB * 100;
-            toggleFlashEl.checked = isFlashOn;
-            toggleTrainerEl.checked = isTrainerOn;
-
-            updateTrackUI(); updateBeatTabs(); renderNotation(); renderSimpleTracker();
-            window.addEventListener('resize', () => { if(!isFocusMode) renderNotation(); });
-            initWorker();
-        }
-
-        // --- EVENTOS MIXER ---
-        volAccentEl.addEventListener('input', (e) => { volAccent = e.target.value / 100; saveState(); });
-        volNormalEl.addEventListener('input', (e) => { volNormal = e.target.value / 100; saveState(); });
-        volTrackBEl.addEventListener('input', (e) => { volTrackB = e.target.value / 100; saveState(); });
-        toggleFlashEl.addEventListener('change', (e) => { isFlashOn = e.target.checked; saveState(); });
-        toggleTrainerEl.addEventListener('change', (e) => { 
-            isTrainerOn = e.target.checked; 
-            if(!isTrainerOn) { trainerAlert.classList.add('hidden'); isMutedByTrainer = false; }
-            saveState(); 
-        });
-
-        // --- PISTAS ---
-        trackABtn.addEventListener('click', () => {
-            activeEditTrack = 'A';
-            updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation();
-        });
-
-        trackBBtn.addEventListener('click', () => {
-            if (activeEditTrack === 'B') isTrackBEnabled = !isTrackBEnabled;
-            else { activeEditTrack = 'B'; if (!isTrackBEnabled) isTrackBEnabled = true; }
-            updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation(); saveState();
-        });
 
         function updateTrackUI() {
             if (activeEditTrack === 'A') {
-                trackABtn.classList.add('active-a'); trackABtn.classList.remove('opacity-60', 'bg-slate-100');
-                trackBBtn.classList.remove('active-b'); trackBBtn.classList.add('bg-slate-100', 'text-slate-600');
-                trackIndicator.textContent = "Pista A";
+                trackABtn.classList.add('active-a'); trackABtn.classList.remove('text-slate-400', 'bg-slate-700');
+                trackBBtn.classList.remove('active-b'); trackBBtn.classList.add('text-slate-500', 'bg-slate-900');
             } else {
-                trackABtn.classList.remove('active-a'); trackABtn.classList.add('bg-slate-100', 'text-slate-600');
-                trackBBtn.classList.add('active-b'); trackBBtn.classList.remove('opacity-60', 'bg-slate-100', 'text-slate-600');
-                trackIndicator.textContent = "Pista B";
+                trackABtn.classList.remove('active-a'); trackABtn.classList.add('text-slate-400', 'bg-slate-700');
+                trackBBtn.classList.add('active-b'); trackBBtn.classList.remove('text-slate-500', 'bg-slate-900');
             }
-            trackBBtn.textContent = isTrackBEnabled ? "Pista B (On)" : "Pista B (Off)";
-            if(!isTrackBEnabled) trackBBtn.classList.add('opacity-60');
-            else trackBBtn.classList.remove('opacity-60');
+            trackBStatus.textContent = isTrackBEnabled ? "ON" : "OFF";
+            trackBStatus.className = isTrackBEnabled ? "ml-2 text-[10px] bg-emerald-500 text-white px-2 py-0.5 rounded border border-emerald-400" : "ml-2 text-[10px] bg-slate-800 px-2 py-0.5 rounded text-slate-400 border border-slate-700";
         }
 
-        // --- COMPASES Y EDICIÓN ---
         function changeBeatsPerBar(newCount) {
             if(newCount < 1 || newCount > 16) return;
             if (newCount > beatsPerBar) {
-                for (let i = beatsPerBar; i < newCount; i++) {
-                    tracks['A'].push(createDefaultBeat()); tracks['B'].push(createDefaultBeat());
-                }
+                for (let i = beatsPerBar; i < newCount; i++) { tracks['A'].push(createDefaultBeat()); tracks['B'].push(createDefaultBeat()); }
             } else {
                 tracks['A'] = tracks['A'].slice(0, newCount); tracks['B'] = tracks['B'].slice(0, newCount);
                 if (selectedBeatIndex >= newCount) selectedBeatIndex = newCount - 1;
             }
-            beatsPerBar = newCount;
-            document.getElementById('beats-display').textContent = beatsPerBar;
+            beatsPerBar = newCount; document.getElementById('beats-display').textContent = beatsPerBar;
             if (currentBeat >= beatsPerBar) currentBeat = 0;
-            
             updateBeatTabs(); if(!isFocusMode) renderNotation(); renderSimpleTracker(); saveState();
         }
 
         function updateBeatTabs() {
             beatTabsContainer.innerHTML = '';
             const activeData = tracks[activeEditTrack];
-
             for (let i = 0; i < beatsPerBar; i++) {
                 const tab = document.createElement('button');
                 const themeClass = activeEditTrack === 'A' ? 'bg-blue-500 border-blue-600' : 'bg-emerald-600 border-emerald-700';
                 const bData = activeData[i];
                 let desc = bData.subDivs.length > 0 ? bData.subDivs.join('+') : '1';
-
-                tab.className = `beat-tab px-3 py-1.5 md:px-4 md:py-2 rounded-xl border-2 font-bold text-[10px] md:text-sm tracking-widest flex-shrink-0 
-                    ${i === selectedBeatIndex ? `active text-white ${themeClass}` : 'bg-slate-100 border-slate-300 text-slate-600'}`;
+                tab.className = `beat-tab px-3 py-1.5 md:px-4 md:py-2 rounded-xl border-2 font-bold text-[10px] md:text-sm tracking-widest flex-shrink-0 ${i === selectedBeatIndex ? `active text-white ${themeClass}` : 'bg-slate-100 border-slate-300 text-slate-600'}`;
                 tab.innerHTML = `T${i + 1} <span class="block text-[9px] md:text-xs font-normal opacity-75 mt-1">[${desc}]</span>`;
+                tab.id = `beat-tab-${i}`;
                 tab.onclick = () => { selectedBeatIndex = i; updateBeatTabs(); if(!isFocusMode) renderNotation(); };
                 beatTabsContainer.appendChild(tab);
             }
@@ -632,12 +508,9 @@
 
         function setBaseForSelectedBeat(newBase) {
             const beatData = tracks[activeEditTrack][selectedBeatIndex];
-            beatData.base = newBase;
-            beatData.subDivs = new Array(newBase).fill(1);
-            beatData.states = new Array(newBase).fill(1);
-            beatData.states[0] = activeEditTrack === 'A' ? 2 : 1;
+            beatData.base = newBase; beatData.subDivs = new Array(newBase).fill(1);
+            beatData.states = new Array(newBase).fill(1); beatData.states[0] = activeEditTrack === 'A' ? 2 : 1;
             beatData.syllableVariants = {}; 
-            
             updateBeatTabs(); if(!isFocusMode) renderNotation(); saveState();
         }
 
@@ -645,11 +518,8 @@
             const beatData = tracks[activeEditTrack][selectedBeatIndex];
             beatData.subDivs[fracIndex] = newDivVal;
             const newTotal = beatData.subDivs.reduce((a,b)=>a+b, 0);
-            const newStates = new Array(newTotal).fill(1);
-            newStates[0] = activeEditTrack === 'A' ? 2 : 1; 
-            beatData.states = newStates;
-            beatData.syllableVariants = {}; 
-            
+            const newStates = new Array(newTotal).fill(1); newStates[0] = activeEditTrack === 'A' ? 2 : 1; 
+            beatData.states = newStates; beatData.syllableVariants = {}; 
             updateBeatTabs(); if(!isFocusMode) renderNotation(); saveState();
         }
 
@@ -658,13 +528,11 @@
             let st = beatData.states[globalNoteIdx];
             if (st === 2) st = 1; else if (st === 1) st = 3; else if (st === 3) st = 0; else st = 2;
             beatData.states[globalNoteIdx] = st;
-            
             refreshEditorUI(); if(!isFocusMode) renderNotation(); saveState();
         }
 
         function refreshEditorUI() {
             const beatData = tracks[activeEditTrack][selectedBeatIndex];
-
             document.querySelectorAll('.base-btn').forEach((btn, index) => {
                 if (index + 1 === beatData.base) { btn.classList.add('active'); btn.classList.replace('text-slate-500', 'text-white'); } 
                 else { btn.classList.remove('active'); btn.classList.replace('text-white', 'text-slate-500'); }
@@ -674,21 +542,12 @@
             for (let i = 0; i < beatData.base; i++) {
                 const group = document.createElement('div');
                 group.className = 'flex flex-col items-center bg-white p-2 rounded-lg shadow-sm border border-slate-200 min-w-[60px] md:min-w-[70px]';
-                
-                const label = document.createElement('span');
-                label.className = 'text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mb-1';
-                label.textContent = `Fracción ${i+1}`;
-                group.appendChild(label);
-
-                const divSelect = document.createElement('select');
-                divSelect.className = 'bg-slate-100 border border-slate-300 text-slate-700 text-[10px] md:text-xs rounded block w-full p-1 cursor-pointer font-bold outline-none';
+                const label = document.createElement('span'); label.className = 'text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mb-1'; label.textContent = `Fracción ${i+1}`; group.appendChild(label);
+                const divSelect = document.createElement('select'); divSelect.className = 'bg-slate-100 border border-slate-300 text-slate-700 text-[10px] md:text-xs rounded block w-full p-1 cursor-pointer font-bold outline-none';
                 [1,2,3,4,5,6,7,8].forEach(val => {
-                    const opt = document.createElement('option');
-                    opt.value = val; opt.textContent = `${val} nota(s)`;
-                    if (beatData.subDivs[i] === val) opt.selected = true;
-                    divSelect.appendChild(opt);
+                    const opt = document.createElement('option'); opt.value = val; opt.textContent = `${val} nota(s)`;
+                    if (beatData.subDivs[i] === val) opt.selected = true; divSelect.appendChild(opt);
                 });
-                
                 divSelect.onchange = (e) => setNestedSubdivision(i, parseInt(e.target.value));
                 group.appendChild(divSelect); nestedControlsContainer.appendChild(group);
             }
@@ -697,21 +556,47 @@
             for (let i = 0; i < beatData.states.length; i++) {
                 const state = beatData.states[i];
                 const block = document.createElement('button');
-                block.className = `step-btn flex-1 rounded-lg border-2 font-bold text-base md:text-xl flex items-center justify-center min-w-[25px] md:min-w-[30px] h-10 md:h-14 ${getStepClass(state)}`;
-                block.innerHTML = getStepIcon(state);
+                block.className = `step-btn flex-1 rounded-lg border-2 font-bold text-base md:text-xl flex items-center justify-center min-w-[25px] md:min-w-[30px] h-10 md:h-14 ${state===2?'step-accent':(state===1?'step-normal':(state===3?'step-tie':'step-rest'))}`;
+                block.innerHTML = state===2?'>':(state===1?'•':(state===3?'<span class="text-xl md:text-3xl font-light">-</span>':''));
                 block.onclick = () => cycleNoteState(selectedBeatIndex, i);
                 patternBuilderContainer.appendChild(block);
             }
         }
 
-        function getStepClass(state) {
-            if (state === 2) return 'step-accent'; if (state === 1) return 'step-normal';
-            if (state === 3) return 'step-tie'; return 'step-rest';
+        // --- 6. EVENT LISTENERS ---
+        let tapTimes = []; const TAP_TIMEOUT = 2000; const MAX_TAPS = 4;
+        function triggerTapTempo() {
+            const now = performance.now();
+            bpmContainer.classList.remove('tap-pulse'); void bpmContainer.offsetWidth; bpmContainer.classList.add('tap-pulse');
+            if (tapTimes.length > 0 && (now - tapTimes[tapTimes.length - 1]) > TAP_TIMEOUT) tapTimes = [];
+            tapTimes.push(now); if (tapTimes.length > MAX_TAPS) tapTimes.shift();
+            if (tapTimes.length >= 2) {
+                let totalDelta = 0; for (let i = 1; i < tapTimes.length; i++) totalDelta += (tapTimes[i] - tapTimes[i - 1]);
+                let calcBPM = Math.round(60000 / (totalDelta / (tapTimes.length - 1)));
+                if (calcBPM < 30) calcBPM = 30; if (calcBPM > 300) calcBPM = 300; updateBPM(calcBPM);
+            }
         }
-        function getStepIcon(state) {
-            if (state === 2) return '>'; if (state === 1) return '•';
-            if (state === 3) return '<span class="text-xl md:text-3xl font-light">-</span>'; return '';
-        }
+
+        function updateBPM(val) { currentBPM = val; bpmInput.value = val; bpmSlider.value = val; tapTimes = []; saveState(); }
+        
+        tapBtn.addEventListener('click', triggerTapTempo);
+        bpmInput.addEventListener('change', (e) => { let v = parseInt(e.target.value); updateBPM(isNaN(v)||v<30?30:(v>300?300:v)); });
+        bpmInput.addEventListener('blur', (e) => { let v = parseInt(e.target.value); updateBPM(isNaN(v)||v<30?30:(v>300?300:v)); });
+        bpmInput.addEventListener('keydown', (e) => { if(e.key === 'Enter') bpmInput.blur(); });
+        bpmSlider.addEventListener('input', (e) => updateBPM(parseInt(e.target.value)));
+        document.getElementById('btn-minus').addEventListener('click', () => { if(currentBPM>30) updateBPM(currentBPM - 1); });
+        document.getElementById('btn-plus').addEventListener('click', () => { if(currentBPM<300) updateBPM(currentBPM + 1); });
+        document.getElementById('beats-minus').addEventListener('click', () => changeBeatsPerBar(beatsPerBar - 1));
+        document.getElementById('beats-plus').addEventListener('click', () => changeBeatsPerBar(beatsPerBar + 1));
+        btnReset.addEventListener('click', () => { if(confirm("¿Seguro que quieres borrar la sesión?")) resetState(); });
+        playBtn.addEventListener('click', () => isPlaying ? stopMetronome() : startMetronome());
+
+        volAccentEl.addEventListener('input', (e) => { volAccent = e.target.value / 100; saveState(); });
+        volNormalEl.addEventListener('input', (e) => { volNormal = e.target.value / 100; saveState(); });
+        volTrackBEl.addEventListener('input', (e) => { volTrackB = e.target.value / 100; saveState(); });
+        toggleFlashEl.addEventListener('change', (e) => { isFlashOn = e.target.checked; saveState(); });
+        toggleTrainerEl.addEventListener('change', (e) => { isTrainerOn = e.target.checked; if(!isTrainerOn) { trainerAlert.classList.add('hidden'); isMutedByTrainer = false; } saveState(); });
+        toggleSolkattuEl.addEventListener('change', (e) => { isSolkattuOn = e.target.checked; if(!isFocusMode) renderNotation(); saveState(); });
 
         document.getElementById('notation-svg').addEventListener('click', (e) => {
             const hitbox = e.target.closest('.beat-hitbox');
@@ -729,130 +614,63 @@
                 if(!isFocusMode) renderNotation();
             }
 
-            if (interactiveNote) { 
-                cycleNoteState(targetB, parseInt(interactiveNote.getAttribute('data-i'))); 
-            } else if (interactiveText) { 
-                cycleSolkattuVariant(targetB, parseInt(interactiveText.getAttribute('data-start'))); 
-            }
+            if (interactiveNote) cycleNoteState(targetB, parseInt(interactiveNote.getAttribute('data-i'))); 
+            else if (interactiveText) cycleSolkattuVariant(targetB, parseInt(interactiveText.getAttribute('data-start'))); 
         });
 
-        // --- GESTIÓN DE BPM Y EVENTOS MANUALES ---
-        function updateBPM(val) { 
-            currentBPM = val; 
-            bpmInput.value = val; 
-            bpmSlider.value = val; 
-            tapTimes = []; 
-            saveState(); 
-        }
-
-        function triggerTapTempo() {
-            const now = performance.now();
-            bpmContainer.classList.remove('tap-pulse'); void bpmContainer.offsetWidth; bpmContainer.classList.add('tap-pulse');
-            if (tapTimes.length > 0 && (now - tapTimes[tapTimes.length - 1]) > TAP_TIMEOUT) tapTimes = [];
-            tapTimes.push(now);
-            if (tapTimes.length > MAX_TAPS) tapTimes.shift();
-            if (tapTimes.length >= 2) {
-                let totalDelta = 0;
-                for (let i = 1; i < tapTimes.length; i++) totalDelta += (tapTimes[i] - tapTimes[i - 1]);
-                let calcBPM = Math.round(60000 / (totalDelta / (tapTimes.length - 1)));
-                if (calcBPM < 30) calcBPM = 30; if (calcBPM > 300) calcBPM = 300;
-                updateBPM(calcBPM);
+        // Focus & Help
+        function toggleFocusMode() {
+            isFocusMode = !isFocusMode;
+            if (isFocusMode) {
+                svgWrapper.classList.add('hidden'); simpleTracker.classList.remove('hidden');
+                toggleViewBtn.textContent = "Mostrar Pauta Detallada"; toggleViewBtn.classList.replace('text-blue-400', 'text-amber-400');
+                renderSimpleTracker();
+            } else {
+                svgWrapper.classList.remove('hidden'); simpleTracker.classList.add('hidden');
+                toggleViewBtn.textContent = "Modo Foco (Ocultar Pauta)"; toggleViewBtn.classList.replace('text-amber-400', 'text-blue-400');
+                renderNotation();
             }
         }
+        toggleViewBtn.addEventListener('click', toggleFocusMode);
 
-        tapBtn.addEventListener('click', triggerTapTempo);
-        
-        // Listeners del Input Manual de BPM
-        bpmInput.addEventListener('change', (e) => {
-            let val = parseInt(e.target.value);
-            if(isNaN(val) || val < 30) val = 30;
-            if(val > 300) val = 300;
-            updateBPM(val);
-        });
-        bpmInput.addEventListener('blur', (e) => {
-            let val = parseInt(e.target.value);
-            if(isNaN(val) || val < 30) val = 30;
-            if(val > 300) val = 300;
-            updateBPM(val);
-        });
-        bpmInput.addEventListener('keydown', (e) => {
-            if(e.key === 'Enter') {
-                bpmInput.blur(); // Trigger blur to save and unfocus
-            }
-        });
+        function openHelp() {
+            helpModalBackdrop.classList.remove('hidden');
+            setTimeout(() => { helpModalBackdrop.classList.remove('opacity-0'); helpModalContent.classList.remove('scale-95'); }, 10);
+        }
+        function closeHelp() {
+            helpModalBackdrop.classList.add('opacity-0'); helpModalContent.classList.add('scale-95');
+            setTimeout(() => { helpModalBackdrop.classList.add('hidden'); }, 300);
+        }
+        btnHelp.addEventListener('click', openHelp); closeHelpBtn.addEventListener('click', closeHelp);
+        helpModalBackdrop.addEventListener('click', (e) => { if(e.target === helpModalBackdrop) closeHelp(); });
 
-        bpmSlider.addEventListener('input', (e) => updateBPM(parseInt(e.target.value)));
-        document.getElementById('btn-minus').addEventListener('click', () => { if(currentBPM>30) updateBPM(currentBPM - 1); });
-        document.getElementById('btn-plus').addEventListener('click', () => { if(currentBPM<300) updateBPM(currentBPM + 1); });
-        document.getElementById('beats-minus').addEventListener('click', () => changeBeatsPerBar(beatsPerBar - 1));
-        document.getElementById('beats-plus').addEventListener('click', () => changeBeatsPerBar(beatsPerBar + 1));
-        
-        btnReset.addEventListener('click', () => { if(confirm("¿Seguro que quieres borrar la sesión?")) resetState(); });
-        playBtn.addEventListener('click', () => isPlaying ? stopMetronome() : startMetronome());
-
-        // --- ATAJOS DE TECLADO GLOBALES (SEGUROS) ---
         document.addEventListener('keydown', (e) => {
-            // Ignorar atajos si el usuario está escribiendo en el campo de BPM o cualquier otro input/textarea futuro
             if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-
-            // Prevenir comportamientos por defecto donde sea necesario (ej. Scroll con espacio/flechas)
-            if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
-                e.preventDefault();
-            }
-
+            if (['Space', 'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) e.preventDefault();
             switch(e.code) {
-                case 'Space':
-                    isPlaying ? stopMetronome() : startMetronome();
-                    break;
-                case 'KeyT':
-                    triggerTapTempo();
-                    break;
-                case 'KeyM':
-                    toggleFocusMode();
-                    break;
-                case 'KeyA':
-                    if(activeEditTrack !== 'A') {
-                        activeEditTrack = 'A';
-                        updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation();
-                    }
-                    break;
-                case 'KeyB':
-                    if (activeEditTrack === 'B') isTrackBEnabled = !isTrackBEnabled;
-                    else { activeEditTrack = 'B'; if (!isTrackBEnabled) isTrackBEnabled = true; }
-                    updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation(); saveState();
-                    break;
-                case 'KeyF':
-                    toggleFlashEl.checked = !toggleFlashEl.checked;
-                    isFlashOn = toggleFlashEl.checked;
-                    saveState();
-                    break;
-                case 'KeyE':
-                    toggleTrainerEl.checked = !toggleTrainerEl.checked;
-                    isTrainerOn = toggleTrainerEl.checked;
-                    if(!isTrainerOn) { trainerAlert.classList.add('hidden'); isMutedByTrainer = false; }
-                    saveState();
-                    break;
-                case 'KeyH':
-                    helpModalBackdrop.classList.contains('hidden') ? openHelp() : closeHelp();
-                    break;
-                case 'ArrowUp':
-                    if(currentBPM < 300) updateBPM(currentBPM + 1);
-                    break;
-                case 'ArrowDown':
-                    if(currentBPM > 30) updateBPM(currentBPM - 1);
-                    break;
-                case 'ArrowRight':
-                    selectedBeatIndex = (selectedBeatIndex + 1) % beatsPerBar;
-                    updateBeatTabs(); if(!isFocusMode) renderNotation();
-                    break;
-                case 'ArrowLeft':
-                    selectedBeatIndex = (selectedBeatIndex - 1 + beatsPerBar) % beatsPerBar;
-                    updateBeatTabs(); if(!isFocusMode) renderNotation();
-                    break;
+                case 'Space': isPlaying ? stopMetronome() : startMetronome(); break;
+                case 'KeyT': triggerTapTempo(); break;
+                case 'KeyM': toggleFocusMode(); break;
+                case 'KeyA': if(activeEditTrack !== 'A') { activeEditTrack = 'A'; updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation(); } break;
+                case 'KeyB': if(activeEditTrack === 'B') isTrackBEnabled = !isTrackBEnabled; else { activeEditTrack = 'B'; if (!isTrackBEnabled) isTrackBEnabled = true; } updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation(); saveState(); break;
+                case 'KeyF': toggleFlashEl.checked = !toggleFlashEl.checked; isFlashOn = toggleFlashEl.checked; saveState(); break;
+                case 'KeyE': toggleTrainerEl.checked = !toggleTrainerEl.checked; isTrainerOn = toggleTrainerEl.checked; if(!isTrainerOn) { trainerAlert.classList.add('hidden'); isMutedByTrainer = false; } saveState(); break;
+                case 'KeyS': toggleSolkattuEl.checked = !toggleSolkattuEl.checked; isSolkattuOn = toggleSolkattuEl.checked; if(!isFocusMode) renderNotation(); saveState(); break;
+                case 'KeyH': helpModalBackdrop.classList.contains('hidden') ? openHelp() : closeHelp(); break;
+                case 'ArrowUp': if(currentBPM < 300) updateBPM(currentBPM + 1); break;
+                case 'ArrowDown': if(currentBPM > 30) updateBPM(currentBPM - 1); break;
+                case 'ArrowRight': selectedBeatIndex = (selectedBeatIndex + 1) % beatsPerBar; updateBeatTabs(); if(!isFocusMode) renderNotation(); break;
+                case 'ArrowLeft': selectedBeatIndex = (selectedBeatIndex - 1 + beatsPerBar) % beatsPerBar; updateBeatTabs(); if(!isFocusMode) renderNotation(); break;
             }
         });
 
-        // --- RENDER SVG ---
+        function smoothScrollContainer(container, targetEl) {
+            if (!container || !targetEl) return;
+            const targetLeft = targetEl.offsetLeft - (container.clientWidth / 2) + (targetEl.clientWidth / 2);
+            container.scrollTo({ left: targetLeft, behavior: 'smooth' });
+        }
+
+        // --- 7. SVG RENDER ---
         function renderNotation() {
             if(isFocusMode) return;
             svgLayer.innerHTML = ''; 
@@ -898,18 +716,14 @@
                     const fracOffsetX = offsetX + (f * fracWidth);
                     const stepX = notesInFrac > 1 ? (fracWidth * 0.8) / (notesInFrac - 1) : 0;
                     const startX = fracOffsetX + (fracWidth * 0.1);
-
                     let effDiv = bData.base * notesInFrac;
                     let reqBeams = effDiv < 2 ? 0 : (effDiv < 4 ? 1 : (effDiv < 8 ? 2 : (effDiv < 16 ? 3 : 4)));
 
                     for (let i = 0; i < notesInFrac; i++) {
-                        const x = startX + (notesInFrac === 1 ? fracWidth*0.4 : i * stepX);
-                        beatNotes.push({ x: x, state: bData.states[globalNoteIndex], beams: reqBeams, gIdx: globalNoteIndex });
+                        beatNotes.push({ x: startX + (notesInFrac === 1 ? fracWidth*0.4 : i * stepX), state: bData.states[globalNoteIndex], beams: reqBeams, gIdx: globalNoteIndex });
                         globalNoteIndex++;
                     }
-                    if (notesInFrac >= 3) {
-                        svgHTML += `<text x="${fracOffsetX + (fracWidth/2)}" y="25" font-size="14" font-style="italic" font-weight="bold" font-family="serif" text-anchor="middle" fill="#64748b" class="pointer-events-none">${notesInFrac}</text>`;
-                    }
+                    if (notesInFrac >= 3) svgHTML += `<text x="${fracOffsetX + (fracWidth/2)}" y="25" font-size="14" font-style="italic" font-weight="bold" font-family="serif" text-anchor="middle" fill="#64748b" class="pointer-events-none">${notesInFrac}</text>`;
                 }
 
                 let maxBeams = Math.max(...beatNotes.map(n => n.beams), 0);
@@ -918,20 +732,15 @@
                     for (let i = 0; i <= beatNotes.length; i++) {
                         let note = beatNotes[i];
                         let isValid = note && note.state > 0 && note.beams >= lvl;
-                        
-                        if (isValid) { 
-                            if (runStart === -1) runStart = i; 
-                        } else {
+                        if (isValid) { if (runStart === -1) runStart = i; } 
+                        else {
                             if (runStart !== -1) {
                                 let runEnd = i - 1;
                                 if (runStart < runEnd) {
-                                    let x1 = beatNotes[runStart].x + 6;
-                                    let x2 = beatNotes[runEnd].x + 6;
-                                    let y = beamBaseY + ((lvl - 1) * 8);
+                                    let x1 = beatNotes[runStart].x + 6; let x2 = beatNotes[runEnd].x + 6; let y = beamBaseY + ((lvl - 1) * 8);
                                     svgHTML += `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#0f172a" stroke-width="4" class="pointer-events-none"/>`;
                                 } else {
-                                    let nx = beatNotes[runStart].x + 6;
-                                    let ny = beamBaseY + ((lvl - 1) * 8);
+                                    let nx = beatNotes[runStart].x + 6; let ny = beamBaseY + ((lvl - 1) * 8);
                                     svgHTML += `<use href="#n-flag" x="${nx}" y="${ny}" class="text-slate-900 pointer-events-none" />`;
                                 }
                                 runStart = -1;
@@ -942,47 +751,34 @@
 
                 for (let i = 0; i < beatNotes.length; i++) {
                     const note = beatNotes[i];
-                    const state = note.state;
-                    const x = note.x;
                     const elId = `svg-note-${b}-${note.gIdx}`;
-                    const kId = `svg-konnakol-${b}-${note.gIdx}`;
-
-                    const kText = syllables[note.gIdx];
-                    const kColor = (state === 0 || state === 3) ? "#cbd5e1" : "#64748b";
-                    const meta = phraseMeta[note.gIdx];
                     
-                    let txtClass = "transition-all duration-75";
-                    if(meta && meta.optionsCount > 1 && state !== 0 && state !== 3) txtClass += " interactive-text";
-
-                    svgHTML += `<text id="${kId}" x="${x}" y="${konnakolY}" font-size="12" font-family="monospace" font-weight="bold" text-anchor="middle" fill="${kColor}" class="${txtClass}" data-b="${b}" data-start="${meta ? meta.startIndex : 0}">${kText}</text>`;
+                    if (isSolkattuOn) {
+                        const meta = phraseMeta[note.gIdx];
+                        let txtClass = "transition-all duration-75";
+                        if(meta && meta.optionsCount > 1 && note.state !== 0 && note.state !== 3) txtClass += " interactive-text";
+                        svgHTML += `<text id="svg-konnakol-${b}-${note.gIdx}" x="${note.x}" y="${konnakolY}" font-size="12" font-family="monospace" font-weight="bold" text-anchor="middle" fill="${(note.state === 0 || note.state === 3) ? "#cbd5e1" : "#64748b"}" class="${txtClass}" data-b="${b}" data-start="${meta ? meta.startIndex : 0}">${syllables[note.gIdx]}</text>`;
+                    }
 
                     svgHTML += `<g class="interactive-note cursor-pointer" data-b="${b}" data-i="${note.gIdx}">`;
-                    svgHTML += `<rect x="${x-15}" y="${beamBaseY-10}" width="30" height="${noteY-beamBaseY+30}" fill="transparent" />`;
+                    svgHTML += `<rect x="${note.x-15}" y="${beamBaseY-10}" width="30" height="${noteY-beamBaseY+30}" fill="transparent" />`;
 
-                    if (state === 0) {
+                    if (note.state === 0) {
                         const isShort = (beatWidth / bData.base) < 50;
-                        const restRef = isShort ? '#n-rest-8' : '#n-rest-4';
-                        svgHTML += `<use id="${elId}" href="${restRef}" x="${x}" y="${noteY-10}" class="text-slate-400 transition-colors duration-100 pointer-events-none" />`;
+                        svgHTML += `<use id="${elId}" href="${isShort ? '#n-rest-8' : '#n-rest-4'}" x="${note.x}" y="${noteY-10}" class="text-slate-400 transition-colors duration-100 pointer-events-none" />`;
                         lastActiveX = -1;
-                    } 
-                    else {
-                        const headColor = state === 2 ? "#ef4444" : "#0f172a";
+                    } else {
                         svgHTML += `<g id="${elId}" class="transition-all duration-75 pointer-events-none">`;
-                        svgHTML += `<use href="#n-head" x="${x}" y="${noteY}" fill="${headColor}"/>`;
-                        
+                        svgHTML += `<use href="#n-head" x="${note.x}" y="${noteY}" fill="${note.state === 2 ? '#ef4444' : '#0f172a'}"/>`;
                         let topY = note.beams > 0 ? beamBaseY : noteY - 35;
-                        svgHTML += `<line x1="${x+6}" y1="${noteY}" x2="${x+6}" y2="${topY}" stroke="#0f172a" stroke-width="2"/>`;
-
-                        if (state === 2) {
-                            svgHTML += `<path d="M ${x-6} ${noteY+18} L ${x+6} ${noteY+14} L ${x-6} ${noteY+10}" fill="none" stroke="#ef4444" stroke-width="2"/>`;
-                        }
+                        svgHTML += `<line x1="${note.x+6}" y1="${noteY}" x2="${note.x+6}" y2="${topY}" stroke="#0f172a" stroke-width="2"/>`;
+                        if (note.state === 2) svgHTML += `<path d="M ${note.x-6} ${noteY+18} L ${note.x+6} ${noteY+14} L ${note.x-6} ${noteY+10}" fill="none" stroke="#ef4444" stroke-width="2"/>`;
                         svgHTML += `</g>`;
 
-                        if (state === 3 && lastActiveX !== -1) {
-                            const midX = (lastActiveX + x) / 2;
-                            svgHTML += `<path d="M ${lastActiveX} ${noteY+12} Q ${midX} ${noteY+30} ${x} ${noteY+12}" fill="none" stroke="#8b5cf6" stroke-width="2.5" class="pointer-events-none"/>`;
+                        if (note.state === 3 && lastActiveX !== -1) {
+                            svgHTML += `<path d="M ${lastActiveX} ${noteY+12} Q ${(lastActiveX + note.x) / 2} ${noteY+30} ${note.x} ${noteY+12}" fill="none" stroke="#8b5cf6" stroke-width="2.5" class="pointer-events-none"/>`;
                         }
-                        lastActiveX = x;
+                        lastActiveX = note.x;
                     }
                     svgHTML += `</g>`; 
                 }
@@ -990,7 +786,7 @@
             svgLayer.innerHTML = svgHTML;
         }
 
-        // --- AUDIO FRACCIONARIO Y PLANIFICADOR ---
+        // --- 8. AUDIO & ENGINE ---
         function initAudio() {
             if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
             if (audioContext.state === 'suspended') audioContext.resume();
@@ -1001,36 +797,24 @@
 
             const osc = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
-            let startFreq, sustainFreq;
             
             if (track === 'A') {
-                startFreq = isMainBeat ? 1500 : (isAccent ? 1000 : 700);
-                sustainFreq = isMainBeat ? 800 : (isAccent ? 500 : 350);
+                osc.frequency.setValueAtTime(isMainBeat ? 1500 : (isAccent ? 1000 : 700), time);
+                osc.frequency.exponentialRampToValueAtTime(isMainBeat ? 800 : (isAccent ? 500 : 350), time + 0.04);
                 osc.type = 'sine';
             } else {
-                startFreq = isMainBeat ? 600 : (isAccent ? 400 : 250);
-                sustainFreq = isMainBeat ? 300 : (isAccent ? 200 : 150);
+                osc.frequency.setValueAtTime(isMainBeat ? 600 : (isAccent ? 400 : 250), time);
+                osc.frequency.exponentialRampToValueAtTime(isMainBeat ? 300 : (isAccent ? 200 : 150), time + 0.04);
                 osc.type = 'triangle'; 
             }
             
-            let dynamicVol = 1.0;
-            if (track === 'B') {
-                dynamicVol = volTrackB; 
-            } else {
-                if (isAccent || isMainBeat) dynamicVol = volAccent;
-                else dynamicVol = volNormal;
-            }
-
-            osc.frequency.setValueAtTime(startFreq, time);
-            osc.frequency.exponentialRampToValueAtTime(sustainFreq, time + 0.04);
+            let dynamicVol = track === 'B' ? volTrackB : (isAccent || isMainBeat ? volAccent : volNormal);
             gainNode.gain.setValueAtTime(0, time);
-            
-            const maxVol = dynamicVol;
-            gainNode.gain.linearRampToValueAtTime(maxVol, time + 0.002); 
+            gainNode.gain.linearRampToValueAtTime(dynamicVol, time + 0.002); 
             
             if (isTied) {
-                gainNode.gain.exponentialRampToValueAtTime(maxVol * 0.4, time + 0.06); 
-                gainNode.gain.setValueAtTime(maxVol * 0.4, time + duration - 0.02);
+                gainNode.gain.exponentialRampToValueAtTime(dynamicVol * 0.4, time + 0.06); 
+                gainNode.gain.setValueAtTime(dynamicVol * 0.4, time + duration - 0.02);
                 gainNode.gain.linearRampToValueAtTime(0.001, time + duration); 
                 osc.start(time); osc.stop(time + duration);
             } else {
@@ -1093,8 +877,7 @@
                         
                         if (state === 1 || state === 2) {
                             const {totalDuration, hasTie} = calculateComplexDuration(tr, beatIndex, globalIdx);
-                            const isMainBeat = (beatIndex === 0 && globalIdx === 0 && tr === 'A'); 
-                            playTone(tr, noteTime, totalDuration, state === 2, isMainBeat, hasTie);
+                            playTone(tr, noteTime, totalDuration, state === 2, (beatIndex === 0 && globalIdx === 0 && tr === 'A'), hasTie);
                         }
                         
                         scheduleVisuals(tr, beatIndex, globalIdx, state, noteTime);
@@ -1105,17 +888,13 @@
             });
         }
 
-        const flashOverlay = document.getElementById('flash-overlay');
-
         function scheduleVisuals(track, beatNumber, globalIdx, state, time) {
             const timeToWait = (time - audioContext.currentTime) * 1000;
             
             setTimeout(() => {
-                if (track === 'A' && beatNumber === 0 && globalIdx === 0) {
-                    if (isFlashOn) {
-                        flashOverlay.classList.add('flash-active');
-                        setTimeout(() => flashOverlay.classList.remove('flash-active'), 100);
-                    }
+                if (track === 'A' && beatNumber === 0 && globalIdx === 0 && isFlashOn) {
+                    flashOverlay.classList.add('flash-active');
+                    setTimeout(() => flashOverlay.classList.remove('flash-active'), 100);
                 }
 
                 if (globalIdx === 0 && track === 'A') {
@@ -1126,16 +905,32 @@
                             else fDot.classList.replace('bg-blue-500', 'bg-slate-800');
                         }
                     }
+                    
+                    // Auto-scroll the tabs container
+                    const targetTab = document.getElementById(`beat-tab-${beatNumber}`);
+                    smoothScrollContainer(beatTabsContainer, targetTab);
                 }
 
                 if (track === activeEditTrack && !isFocusMode) {
+                    
+                    // Auto-scroll the SVG
+                    if(globalIdx === 0) {
+                        const targetHitbox = document.querySelector(`.beat-hitbox[data-b="${beatNumber}"]`);
+                        if(targetHitbox) {
+                            // Hitboxes don't have offsetLeft, compute based on beat index
+                            const padX = 20; 
+                            const beatWidth = (svgCanvasEl.clientWidth - (padX * 2)) / beatsPerBar;
+                            const targetLeft = (padX + (beatNumber * beatWidth)) - (svgWrapper.clientWidth / 2) + (beatWidth / 2);
+                            svgWrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
+                        }
+                    }
+
                     document.querySelectorAll('[id^="svg-note-"]').forEach(el => {
                         const parts = el.id.split('-');
                         const b = parseInt(parts[2]); const s = parseInt(parts[3]);
                         const originalState = tracks[activeEditTrack][b].states[s];
-                        if(originalState === 0) {
-                            el.classList.replace('text-amber-400', 'text-slate-400');
-                        } else {
+                        if(originalState === 0) el.classList.replace('text-amber-400', 'text-slate-400');
+                        else {
                             const ellipse = el.querySelector('use[href="#n-head"]');
                             if(ellipse) ellipse.setAttribute('fill', originalState === 2 ? '#ef4444' : '#0f172a');
                             el.style.transform = "scale(1)";
@@ -1144,9 +939,8 @@
 
                     const activeEl = document.getElementById(`svg-note-${beatNumber}-${globalIdx}`);
                     if (activeEl) {
-                        if (state === 0) {
-                            activeEl.classList.replace('text-slate-400', 'text-amber-400');
-                        } else {
+                        if (state === 0) activeEl.classList.replace('text-slate-400', 'text-amber-400');
+                        else {
                             const ellipse = activeEl.querySelector('use[href="#n-head"]');
                             if(ellipse) ellipse.setAttribute('fill', state === 3 ? '#fcd34d' : '#f59e0b');
                             const bbox = activeEl.getBBox(); const cx = bbox.x + bbox.width/2; const cy = bbox.y + bbox.height/2;
@@ -1166,20 +960,11 @@
                 currentBeat++;
                 
                 if (currentBeat >= beatsPerBar) {
-                    currentBeat = 0;
-                    globalBarCount++;
-                    
+                    currentBeat = 0; globalBarCount++;
                     if (isTrainerOn) {
-                        if (globalBarCount % 4 === 3) {
-                            isMutedByTrainer = true;
-                            trainerAlert.classList.remove('hidden');
-                        } else {
-                            isMutedByTrainer = false;
-                            trainerAlert.classList.add('hidden');
-                        }
-                    } else {
-                        isMutedByTrainer = false;
-                    }
+                        if (globalBarCount % 4 === 3) { isMutedByTrainer = true; trainerAlert.classList.remove('hidden'); } 
+                        else { isMutedByTrainer = false; trainerAlert.classList.add('hidden'); }
+                    } else { isMutedByTrainer = false; }
                 }
             }
         }
@@ -1197,6 +982,7 @@
             isPlaying = false; if(timerWorker) timerWorker.postMessage("stop");
             playText.textContent = "INICIAR"; playBtn.classList.replace('bg-red-500', 'bg-blue-600'); playBtn.classList.replace('hover:bg-red-600', 'hover:bg-blue-700');
             iconStop.classList.add('hidden'); iconPlay.classList.remove('hidden');
+            
             isMutedByTrainer = false; trainerAlert.classList.add('hidden');
             
             for(let i=0; i<beatsPerBar; i++){
@@ -1206,7 +992,55 @@
             if(!isFocusMode) renderNotation(); 
         }
 
-        loadState(); initUI();
+        function renderSimpleTracker() {
+            simpleTracker.innerHTML = '';
+            for(let i=0; i<beatsPerBar; i++){
+                const dot = document.createElement('div');
+                dot.className = `w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-full border-4 border-slate-700 bg-slate-800 transition-all duration-100 flex items-center justify-center font-bold text-slate-500`;
+                dot.id = `focus-dot-${i}`;
+                dot.textContent = i+1;
+                simpleTracker.appendChild(dot);
+            }
+        }
+
+        function initUI() {
+            baseSelectorsContainer.innerHTML = '';
+            const labels = ["1 (Negra)", "2 (Corcheas)", "3 (Tresillos)", "4 (Semicor.)"]; 
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.createElement('button');
+                btn.className = `base-btn px-3 py-1.5 md:px-4 md:py-2 rounded-lg font-bold text-[10px] md:text-xs uppercase tracking-wider border-2 border-slate-300 text-slate-500 hover:border-slate-800 hover:text-slate-800`;
+                btn.id = `base-btn-${i}`;
+                btn.textContent = labels[i-1];
+                btn.onclick = () => setBaseForSelectedBeat(i);
+                baseSelectorsContainer.appendChild(btn);
+            }
+
+            bpmInput.value = currentBPM;
+            bpmSlider.value = currentBPM;
+            document.getElementById('beats-display').textContent = beatsPerBar;
+            volAccentEl.value = volAccent * 100;
+            volNormalEl.value = volNormal * 100;
+            volTrackBEl.value = volTrackB * 100;
+            toggleFlashEl.checked = isFlashOn;
+            toggleTrainerEl.checked = isTrainerOn;
+            toggleSolkattuEl.checked = isSolkattuOn;
+
+            updateTrackUI(); 
+            updateBeatTabs(); 
+            renderSimpleTracker();
+            if(!isFocusMode) renderNotation(); 
+            
+            window.addEventListener('resize', () => { if(!isFocusMode) renderNotation(); });
+            initWorker();
+        }
+
+        function init() {
+            loadState();
+            document.getElementById('toggle-solkattu').checked = isSolkattuOn;
+            initUI();
+        }
+
+        init();
     </script>
 </body>
 </html>
