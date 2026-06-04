@@ -22,6 +22,8 @@
         .beat-tab.active { background-color: #3b82f6; color: white; border-color: #2563eb; transform: scale(1.05); }
 
         .track-tab { transition: all 0.2s; border-bottom: 2px solid transparent; cursor: pointer; }
+        .track-tab.active-a { background-color: #1e293b; color: white !important; border-color: #3b82f6; }
+        .track-tab.active-b { background-color: #064e3b; color: white !important; border-color: #10b981; }
 
         .step-btn { transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1); }
         .step-btn:active { transform: scale(0.92); }
@@ -110,7 +112,6 @@
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">E</kbd></td><td class="py-2">Toggle Entrenador Silencios</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">S</kbd></td><td class="py-2">Mostrar/Ocultar Solkattu</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↑</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↓</kbd></td><td class="py-2">Subir/Bajar BPM (+1 / -1)</td></tr>
-                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">←</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">→</kbd></td><td class="py-2">Navegar panel de edición</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -183,7 +184,7 @@
                     </div>
 
                     <div id="simple-tracker" class="w-full bg-slate-800 rounded-lg py-6 md:py-10 hidden overflow-x-auto hide-scrollbar scroll-smooth relative">
-                        <!-- Contenedor interno forzará la alineación segura -->
+                        <!-- Círculos inyectados por JS -->
                     </div>
                     
                     <div id="trainer-alert" class="w-full bg-amber-500/20 border border-amber-500/50 text-amber-200 text-[10px] md:text-xs font-bold uppercase tracking-widest text-center py-2 rounded-lg mt-2 hidden transition-all">
@@ -276,8 +277,9 @@
             <div class="lg:col-span-8 flex flex-col space-y-4 overflow-hidden editor-panel">
                 
                 <div class="bg-white rounded-xl p-3 md:p-4 border border-slate-200 shadow-sm max-w-full">
-                    <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Tiempos del Compás a Editar <span class="lowercase font-normal ml-1 tracking-normal hidden sm:inline">(Flechas ← →)</span></span>
-                    <div class="flex gap-2 overflow-x-auto pb-1 hide-scrollbar scroll-smooth" id="beat-tabs-container"></div>
+                    <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Tiempos del Compás a Editar</span>
+                    <!-- GRID DE TIEMPOS APLICADA AQUÍ -->
+                    <div class="grid grid-cols-4 sm:grid-cols-8 gap-1.5 md:gap-2 w-full" id="beat-tabs-container"></div>
                 </div>
 
                 <div class="bg-white rounded-xl p-4 md:p-6 border border-slate-200 shadow-sm flex-grow max-w-full flex flex-col">
@@ -533,8 +535,10 @@
                 const themeClass = activeEditTrack === 'A' ? 'bg-blue-500 border-blue-600' : 'bg-emerald-600 border-emerald-700';
                 const bData = activeData[i];
                 let desc = bData.subDivs.length > 0 ? bData.subDivs.join('+') : '1';
-                tab.className = `beat-tab px-3 py-1.5 md:px-4 md:py-2 rounded-lg border-2 font-bold text-[10px] md:text-xs tracking-widest flex-shrink-0 ${i === selectedBeatIndex ? `active text-white ${themeClass}` : 'bg-slate-100 border-slate-300 text-slate-600'}`;
-                tab.innerHTML = `T${i + 1} <span class="block text-[9px] md:text-[10px] font-normal opacity-75 mt-0.5 md:mt-1">[${desc}]</span>`;
+                
+                // GRID FIX: Ancho 100% en lugar de flex-shrink
+                tab.className = `beat-tab w-full py-1.5 md:py-2 rounded-lg border-2 font-bold text-[10px] md:text-xs tracking-widest ${i === selectedBeatIndex ? `active text-white ${themeClass}` : 'bg-slate-100 border-slate-300 text-slate-600'}`;
+                tab.innerHTML = `T${i + 1} <span class="block text-[8px] md:text-[9px] font-normal opacity-75 mt-0.5">[${desc}]</span>`;
                 tab.id = `beat-tab-${i}`;
                 tab.onclick = () => { 
                     if(isAppLocked) return;
@@ -874,7 +878,7 @@
             svgLayer.innerHTML = svgHTML;
         }
 
-        // --- 8. AUDIO ENGINE (CORRECTED FOR PERCUSSION) ---
+        // --- 8. AUDIO ENGINE ---
         function initAudio() {
             if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
             if (audioContext.state === 'suspended') audioContext.resume();
@@ -883,38 +887,53 @@
         function playTone(track, time, duration, isAccent, isMainBeat, isTied) {
             if (isMutedByTrainer) return; 
 
-            // Determinar la frecuencia base unificada, respetando alturas tonales para no arruinar polirritmias
-            let freq;
-            if (track === 'A') {
-                freq = isMainBeat ? 1500 : (isAccent ? 1000 : 600);
-            } else {
-                freq = isMainBeat ? 800 : (isAccent ? 500 : 300);
-            }
-
+            const bufferSize = audioContext.sampleRate * 0.05; 
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            
+            const noise = audioContext.createBufferSource();
+            noise.buffer = buffer;
+            const noiseFilter = audioContext.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            
             const osc = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
+            const noiseGain = audioContext.createGain();
+            
+            // UNIFICACIÓN DE FRECUENCIAS: Un solo tono estático estricto por pista.
+            if (track === 'A') {
+                noiseFilter.frequency.value = 1500;
+                osc.frequency.setValueAtTime(800, time);
+                osc.frequency.exponentialRampToValueAtTime(300, time + 0.04);
+                osc.type = 'sine';
+            } else {
+                noiseFilter.frequency.value = 800;
+                osc.frequency.setValueAtTime(400, time);
+                osc.frequency.exponentialRampToValueAtTime(150, time + 0.04);
+                osc.type = 'triangle'; 
+            }
+            
+            // El volumen respeta el Mixer (para no romper la interfaz de mezcla),
+            // pero ignoramos por completo si es el inicio del compás (MainBeat)
+            let rawVol = track === 'B' ? volTrackB : (isAccent ? volAccent : volNormal);
+            let dynamicVol = Math.pow(rawVol, 2); 
 
-            // Síntesis de "Woodblock" unificado (Golpe seco)
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(freq, time);
-            osc.frequency.exponentialRampToValueAtTime(freq * 0.1, time + 0.05); // Caída rápida de afinación = Ataque percusivo
-
-            let rawVol = track === 'B' ? volTrackB : (isAccent || isMainBeat ? volAccent : volNormal);
-            let dynamicVol = Math.pow(rawVol, 2);
+            noiseGain.gain.setValueAtTime(dynamicVol * 0.8, time);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.02);
 
             gainNode.gain.setValueAtTime(0, time);
-            gainNode.gain.linearRampToValueAtTime(dynamicVol, time + 0.002);
+            gainNode.gain.linearRampToValueAtTime(dynamicVol, time + 0.002); 
             
-            // FÍSICA CORREGIDA: Un metrónomo NO TIENE SUSTAIN. 
-            // Las ligaduras solo extienden el espacio de silencio antes de la próxima nota,
-            // no mantienen un zumbido sintético antinatural.
-            gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
+            // ELIMINADA LA LÓGICA DE SUSTAIN (isTied). 
+            // Todas las notas, sin excepción, decaen de forma idéntica, rápida y percusiva.
+            gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
+            osc.start(time); 
+            osc.stop(time + 0.1);
 
-            osc.connect(gainNode);
-            gainNode.connect(audioContext.destination);
-
-            osc.start(time);
-            osc.stop(time + 0.15); // El sonido muere rápido siempre
+            noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(audioContext.destination);
+            osc.connect(gainNode); gainNode.connect(audioContext.destination);
+            noise.start(time);
         }
 
         function getDurationOfNote(bData, globalIdx, secondsPerBeat) {
