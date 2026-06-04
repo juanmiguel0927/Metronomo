@@ -23,8 +23,6 @@
 
         /* Pistas rediseñadas como pestañas de la partitura */
         .track-tab { transition: all 0.2s; border-bottom: 2px solid transparent; cursor: pointer; }
-        .track-tab.active-a { background-color: #1e293b; color: white; border-color: #3b82f6; }
-        .track-tab.active-b { background-color: #064e3b; color: white; border-color: #10b981; }
 
         .step-btn { transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1); }
         .step-btn:active { transform: scale(0.92); }
@@ -42,7 +40,7 @@
 
         .beat-hitbox { fill: transparent; transition: all 0.2s; rx: 8px; }
         .beat-hitbox:hover { fill: rgba(59, 130, 246, 0.05); }
-        .beat-hitbox[data-selected="true"] { fill: rgba(59, 130, 246, 0.08); stroke: rgba(59, 130, 246, 0.4); stroke-width: 2px; }
+        .beat-hitbox[data-selected="true"] { fill: rgba(59, 130, 246, 0.1); stroke: rgba(59, 130, 246, 0.4); stroke-width: 2px; }
 
         .tap-pulse { animation: tapAnim 0.3s ease-out; }
         @keyframes tapAnim {
@@ -92,7 +90,7 @@
                         <li><strong class="text-slate-800">1. Pistas como Pestañas:</strong> Usa los botones superiores (PISTA A / PISTA B) para alternar qué capa estás viendo y editando. La Pista B suena más grave para las polirritmias.</li>
                         <li><strong class="text-slate-800">2. Subdivisión Anidada:</strong> Selecciona el compás en la parte inferior, define una Base (ej. 2 Corcheas) y luego anida fracciones. Ej: Fracción 1 en "3" y Fracción 2 en "2" crea un seisillo mixto de 3+2.</li>
                         <li><strong class="text-slate-800">3. Inteligencia Solkattu:</strong> El texto se adapta automáticamente a tus acentos. <strong>Clic en el texto directamente en la pauta</strong> para rotar las sílabas (Ej. 5 notas alternan entre TaDiGiNaThom, 3+2 o 2+3).</li>
-                        <li><strong class="text-slate-800">4. Interfaz Desligada:</strong> La pauta SVG arriba muestra el progreso del metrónomo. El panel inferior es exclusivo para <strong>edición estática</strong> para que no pierdas tu selección mientras suena el metrónomo.</li>
+                        <li><strong class="text-slate-800">4. Interfaz Desligada:</strong> La pauta SVG arriba muestra el progreso del metrónomo mediante un destello de luz, pero tu <strong>selección de edición</strong> permanece estática donde hagas clic.</li>
                         <li><strong class="text-slate-800">5. Entrenador de Silencios:</strong> Al activarlo, el 4to compás siempre estará mudo, forzándote a mantener el pulso internamente.</li>
                     </ul>
                 </div>
@@ -122,7 +120,7 @@
         
         <div class="absolute top-4 right-4 z-20 flex gap-2">
             <button id="btn-help" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-white transition-colors border border-slate-600 hover:border-slate-400 px-3 py-1.5 rounded-md bg-slate-800/90 cursor-pointer flex items-center gap-1 shadow" title="Ayuda y Atajos (H)">
-                <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Ayuda
+                <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg Ayuda
             </button>
             <button id="btn-reset" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-red-400 transition-colors border border-slate-600 hover:border-red-400 px-3 py-1.5 rounded-md bg-slate-800/90 cursor-pointer shadow">
                 Reset Sesión
@@ -258,7 +256,7 @@
                     </div>
                 </div>
 
-                <button id="play-btn" class="w-full py-5 md:py-6 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xl md:text-2xl shadow-[0_4px_15px_rgba(37,99,235,0.4)] transition-all transform hover:-translate-y-1 active:translate-y-0 active:shadow-none flex justify-center items-center gap-2 md:gap-3" title="Play/Stop (Espacio)">
+                <button id="play-btn" class="w-full py-4 md:py-6 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-black text-xl md:text-2xl shadow-[0_8px_20px_rgba(37,99,235,0.3)] transition-all transform hover:-translate-y-1 active:translate-y-0 active:shadow-none flex justify-center items-center gap-2 md:gap-3" title="Play/Stop (Espacio)">
                     <svg id="icon-play" class="w-6 h-6 md:w-8 md:h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
                     <svg id="icon-stop" class="w-6 h-6 md:w-8 md:h-8 hidden" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd"></path></svg>
                     <span id="play-text">INICIAR</span>
@@ -410,7 +408,6 @@
         
         const trackABtn = document.getElementById('track-a-btn');
         const trackBBtn = document.getElementById('track-b-btn');
-        const trackBStatus = document.getElementById('track-b-status');
         const beatTabsContainer = document.getElementById('beat-tabs-container');
         const baseSelectorsContainer = document.getElementById('base-selectors');
         const nestedControlsContainer = document.getElementById('nested-controls-container');
@@ -469,14 +466,17 @@
 
         function updateTrackUI() {
             if (activeEditTrack === 'A') {
-                trackABtn.classList.add('active-a'); trackABtn.classList.remove('text-slate-400', 'bg-slate-800');
-                trackBBtn.classList.remove('active-b'); trackBBtn.classList.add('text-slate-500', 'bg-slate-900');
+                trackABtn.className = "track-tab active-a flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase text-slate-400 hover:bg-slate-700";
+                trackBBtn.className = "track-tab flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase bg-slate-900 text-slate-500 hover:bg-slate-800 relative";
             } else {
-                trackABtn.classList.remove('active-a'); trackABtn.classList.add('text-slate-400', 'bg-slate-800');
-                trackBBtn.classList.add('active-b'); trackBBtn.classList.remove('text-slate-500', 'bg-slate-900');
+                trackABtn.className = "track-tab flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase bg-slate-900 text-slate-500 hover:bg-slate-800 relative";
+                trackBBtn.className = "track-tab active-b flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase text-slate-400 hover:bg-slate-700 relative";
             }
-            trackBStatus.textContent = isTrackBEnabled ? "ON" : "OFF";
-            trackBStatus.className = isTrackBEnabled ? "ml-1 md:ml-2 text-[9px] md:text-[10px] bg-emerald-500 text-white px-1.5 md:px-2 py-0.5 rounded border border-emerald-400" : "ml-1 md:ml-2 text-[9px] md:text-[10px] bg-slate-800 px-1.5 md:px-2 py-0.5 rounded text-slate-400 border border-slate-700";
+            const trackBStatus = document.getElementById('track-b-status');
+            if (trackBStatus) {
+                trackBStatus.textContent = isTrackBEnabled ? "ON" : "OFF";
+                trackBStatus.className = isTrackBEnabled ? "ml-1 md:ml-2 text-[9px] md:text-[10px] bg-emerald-500 text-white px-1.5 md:px-2 py-0.5 rounded border border-emerald-400" : "ml-1 md:ml-2 text-[9px] md:text-[10px] bg-slate-800 px-1.5 md:px-2 py-0.5 rounded text-slate-400 border border-slate-700";
+            }
         }
 
         function changeBeatsPerBar(newCount) {
@@ -559,7 +559,7 @@
             for (let i = 0; i < beatData.states.length; i++) {
                 const state = beatData.states[i];
                 const block = document.createElement('button');
-                block.className = `step-btn flex-1 rounded-lg border-2 font-bold text-sm md:text-xl flex items-center justify-center min-w-[20px] md:min-w-[30px] h-8 md:h-12 ${state===2?'step-accent':(state===1?'step-normal':(state===3?'step-tie':'step-rest'))}`;
+                block.className = `step-btn flex-1 rounded-lg border-2 font-bold text-base md:text-xl flex items-center justify-center min-w-[20px] md:min-w-[30px] h-8 md:h-12 ${state===2?'step-accent':(state===1?'step-normal':(state===3?'step-tie':'step-rest'))}`;
                 block.innerHTML = state===2?'>':(state===1?'•':(state===3?'<span class="text-lg md:text-2xl font-light">-</span>':''));
                 block.onclick = () => cycleNoteState(selectedBeatIndex, i);
                 patternBuilderContainer.appendChild(block);
@@ -690,6 +690,12 @@
 
             let svgHTML = '';
             let lastActiveX = -1; 
+
+            // Playback Highlight Backgrounds
+            for (let b = 0; b < beatsPerBar; b++) {
+                const offsetX = padX + (b * beatWidth);
+                svgHTML += `<rect id="playback-bg-${b}" x="${offsetX + 2}" y="10" width="${beatWidth - 4}" height="160" fill="transparent" rx="4" class="transition-colors duration-75 pointer-events-none" />`;
+            }
 
             for (let b = 0; b < beatsPerBar; b++) {
                 const offsetX = padX + (b * beatWidth);
@@ -890,8 +896,11 @@
             
             setTimeout(() => {
                 if (track === 'A' && beatNumber === 0 && globalIdx === 0 && isFlashOn) {
-                    flashOverlay.classList.add('flash-active');
-                    setTimeout(() => flashOverlay.classList.remove('flash-active'), 100);
+                    const flashOverlay = document.getElementById('flash-overlay');
+                    if (flashOverlay) {
+                        flashOverlay.classList.add('flash-active');
+                        setTimeout(() => flashOverlay.classList.remove('flash-active'), 100);
+                    }
                 }
 
                 if (globalIdx === 0 && track === 'A') {
@@ -902,31 +911,38 @@
                             else fDot.classList.replace('bg-blue-500', 'bg-slate-800');
                         }
                     }
+                    
+                    // Highlight de reproducción visual en la pauta (sin alterar la selección de edición)
+                    if (!isFocusMode) {
+                        for(let i=0; i<beatsPerBar; i++){
+                            const bg = document.getElementById(`playback-bg-${i}`);
+                            if(bg) {
+                                if(i === beatNumber) bg.setAttribute('fill', 'rgba(59, 130, 246, 0.15)');
+                                else bg.setAttribute('fill', 'transparent');
+                            }
+                        }
+                    }
                 }
 
-                // Desvincular el auto-scroll de la pauta al editar (el fondo indica reproducción)
+                // Efectos de rebote de las notas activas
                 if (track === activeEditTrack && !isFocusMode) {
-                    document.querySelectorAll('[id^="svg-note-"]').forEach(el => {
-                        const parts = el.id.split('-');
-                        const b = parseInt(parts[2]); const s = parseInt(parts[3]);
-                        const originalState = tracks[activeEditTrack][b].states[s];
-                        if(originalState === 0) el.classList.replace('text-amber-400', 'text-slate-400');
-                        else {
-                            const ellipse = el.querySelector('use[href="#n-head"]');
-                            if(ellipse) ellipse.setAttribute('fill', originalState === 2 ? '#ef4444' : '#0f172a');
-                            el.style.transform = "scale(1)";
-                        }
-                    });
-
                     const activeEl = document.getElementById(`svg-note-${beatNumber}-${globalIdx}`);
                     if (activeEl) {
-                        if (state === 0) activeEl.classList.replace('text-slate-400', 'text-amber-400');
-                        else {
+                        if (state !== 0) {
                             const ellipse = activeEl.querySelector('use[href="#n-head"]');
-                            if(ellipse) ellipse.setAttribute('fill', state === 3 ? '#fcd34d' : '#f59e0b');
+                            const originalColor = state === 2 ? '#ef4444' : '#0f172a';
+                            const activeColor = state === 3 ? '#fcd34d' : '#f59e0b';
+                            
+                            if(ellipse) ellipse.setAttribute('fill', activeColor);
                             const bbox = activeEl.getBBox(); const cx = bbox.x + bbox.width/2; const cy = bbox.y + bbox.height/2;
                             activeEl.style.transformOrigin = `${cx}px ${cy}px`;
                             activeEl.style.transform = "scale(1.3)";
+                            
+                            // Retornar a la normalidad rápidamente
+                            setTimeout(() => {
+                                if(ellipse) ellipse.setAttribute('fill', originalColor);
+                                activeEl.style.transform = "scale(1)";
+                            }, 100);
                         }
                     }
                 }
@@ -969,8 +985,10 @@
             for(let i=0; i<beatsPerBar; i++){
                 const fDot = document.getElementById(`focus-dot-${i}`);
                 if(fDot) fDot.classList.replace('bg-blue-500', 'bg-slate-800');
+                
+                const bg = document.getElementById(`playback-bg-${i}`);
+                if(bg) bg.setAttribute('fill', 'transparent');
             }
-            if(!isFocusMode) renderNotation(); 
         }
 
         function renderSimpleTracker() {
