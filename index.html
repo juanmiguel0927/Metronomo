@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metrónomo</title>
+    <title>Metrónomo Solkattu</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         input[type=range]::-webkit-slider-thumb {
@@ -21,7 +21,6 @@
         .beat-tab { transition: all 0.2s; }
         .beat-tab.active { background-color: #3b82f6; color: white; border-color: #2563eb; transform: scale(1.05); }
 
-        /* Pistas rediseñadas como pestañas de la partitura */
         .track-tab { transition: all 0.2s; border-bottom: 2px solid transparent; cursor: pointer; }
         .track-tab.active-a { background-color: #1e293b; color: white !important; border-color: #3b82f6; }
         .track-tab.active-b { background-color: #064e3b; color: white !important; border-color: #10b981; }
@@ -42,7 +41,6 @@
 
         .beat-hitbox { fill: transparent; transition: all 0.2s; rx: 8px; }
         .beat-hitbox:hover { fill: rgba(59, 130, 246, 0.05); }
-        /* Se eliminó intencionalmente el estado "data-selected" para evitar disonancia visual con el playback */
 
         .tap-pulse { animation: tapAnim 0.3s ease-out; }
         @keyframes tapAnim {
@@ -69,9 +67,12 @@
         input[type=number] { -moz-appearance: textfield; }
         
         #help-modal-backdrop { background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px); }
+
+        body.app-locked .editor-panel { opacity: 0.5; pointer-events: none; filter: grayscale(50%); transition: all 0.3s ease; }
+        body.app-locked .interactive-note, body.app-locked .interactive-text, body.app-locked .beat-hitbox { pointer-events: none; }
     </style>
 </head>
-<body class="bg-slate-200 min-h-screen text-slate-800 font-sans p-2 md:p-8 flex flex-col items-center overflow-x-hidden">
+<body class="bg-slate-200 min-h-screen text-slate-800 font-sans p-2 md:p-8 flex flex-col items-center overflow-x-hidden transition-all duration-300">
 
     <div id="flash-overlay"></div>
 
@@ -89,28 +90,26 @@
                 <div>
                     <h3 class="text-lg font-bold text-blue-600 mb-3 uppercase tracking-wider">Conceptos Core</h3>
                     <ul class="space-y-4">
-                        <li><strong class="text-slate-800">1. Pistas como Pestañas:</strong> Usa los botones superiores (PISTA A / PISTA B) para alternar qué capa estás viendo y editando. La Pista B suena más grave para las polirritmias.</li>
-                        <li><strong class="text-slate-800">2. Subdivisión Anidada:</strong> Selecciona el compás en la parte inferior, define una Base (ej. 2 Corcheas) y luego anida fracciones. Ej: Fracción 1 en "3" y Fracción 2 en "2" crea un seisillo mixto de 3+2.</li>
-                        <li><strong class="text-slate-800">3. Inteligencia Solkattu:</strong> El texto se adapta automáticamente a tus acentos. <strong>Clic en el texto directamente en la pauta</strong> para rotar las sílabas (Ej. 5 notas alternan entre TaDiGiNaThom, 3+2 o 2+3).</li>
-                        <li><strong class="text-slate-800">4. Interfaz Desligada:</strong> La pauta SVG arriba muestra el progreso del metrónomo mediante un destello de luz, pero tu <strong>selección de edición</strong> permanece estática donde hagas clic.</li>
+                        <li><strong class="text-slate-800">1. Pistas como Pestañas:</strong> Usa los botones superiores (PISTA A / PISTA B) para alternar qué capa estás viendo y editando. La Pista B suena más grave.</li>
+                        <li><strong class="text-slate-800">2. Subdivisión Anidada:</strong> Selecciona el compás en la parte inferior, define una Base (ej. 2 Corcheas) y anida fracciones para hacer polirritmias mixtas (ej. 3+2).</li>
+                        <li><strong class="text-slate-800">3. Inteligencia Solkattu:</strong> El texto se adapta a tus acentos. <strong>Clic en el texto en la pauta</strong> para rotar las sílabas.</li>
+                        <li><strong class="text-slate-800">4. Auto-Scroll:</strong> La pauta SVG se moverá sola siguiendo el metrónomo, pero tu panel de edición se mantendrá fijo donde necesites.</li>
                         <li><strong class="text-slate-800">5. Entrenador de Silencios:</strong> Al activarlo, el 4to compás siempre estará mudo, forzándote a mantener el pulso internamente.</li>
                     </ul>
                 </div>
                 
                 <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
                     <h3 class="text-lg font-bold text-amber-600 mb-3 uppercase tracking-wider">Atajos de Teclado Globales</h3>
-                    <p class="text-xs text-slate-400 mb-4 italic">Se desactivan si estás escribiendo el BPM manualmente.</p>
                     <table class="w-full text-left">
                         <tbody class="divide-y divide-slate-200">
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">Espacio</kbd></td><td class="py-2">Reproducir / Detener</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">T</kbd></td><td class="py-2">Tap Tempo</td></tr>
+                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">L</kbd></td><td class="py-2">Bloquear/Desbloquear Interfaz</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">M</kbd></td><td class="py-2">Modo Foco (Mostrar/Ocultar Pauta)</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">A</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">B</kbd></td><td class="py-2">Alternar Pista A / Pista B</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">F</kbd></td><td class="py-2">Toggle Flash Visual</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">E</kbd></td><td class="py-2">Toggle Entrenador Silencios</td></tr>
-                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">S</kbd></td><td class="py-2">Mostrar/Ocultar Solkattu</td></tr>
-                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↑</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↓</kbd></td><td class="py-2">Subir/Bajar BPM (+1 / -1)</td></tr>
-                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">←</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">→</kbd></td><td class="py-2">Navegar panel de edición</td></tr>
+                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↑</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↓</kbd></td><td class="py-2">Subir/Bajar BPM</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -120,15 +119,20 @@
 
     <div class="w-full max-w-7xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-300 relative z-10">
         
-        <!-- Header con Botones de Utilidad adaptables -->
+        <!-- Header Controls -->
         <div class="bg-slate-900 text-white pt-4 pb-6 md:py-8 flex flex-col items-center relative border-b border-slate-800 w-full">
             
             <div class="w-full flex justify-end px-4 mb-2 md:absolute md:top-4 md:right-4 md:mb-0 md:px-0 z-20 gap-2">
+                <button id="btn-lock" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-amber-400 transition-colors border border-slate-600 hover:border-amber-400 px-3 py-1.5 rounded-md bg-slate-800/90 cursor-pointer flex items-center gap-1 shadow" title="Bloquear Edición (L)">
+                    <svg id="icon-unlocked" class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z"></path></svg>
+                    <svg id="icon-locked" class="w-3 h-3 md:w-4 md:h-4 hidden text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    <span id="text-lock">Abierto</span>
+                </button>
                 <button id="btn-help" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-white transition-colors border border-slate-600 hover:border-slate-400 px-3 py-1.5 rounded-md bg-slate-800/90 cursor-pointer flex items-center gap-1 shadow" title="Ayuda y Atajos (H)">
                     <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Ayuda
                 </button>
                 <button id="btn-reset" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-red-400 transition-colors border border-slate-600 hover:border-red-400 px-3 py-1.5 rounded-md bg-slate-800/90 cursor-pointer shadow">
-                    Reset Sesión
+                    Reset
                 </button>
             </div>
 
@@ -140,10 +144,9 @@
             <!-- PANEL SUPERIOR: NOTACIÓN FULL WIDTH -->
             <div class="lg:col-span-12 flex flex-col max-w-full">
                 
-                <!-- Pistas como Pestañas Integradas Superiores (Hitboxes asegurados) -->
                 <div class="flex w-full bg-slate-800 rounded-t-xl overflow-hidden border border-slate-700 border-b-0 shadow-sm relative z-20">
-                    <button id="track-a-btn" class="track-tab active-a flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase text-white relative z-10">PISTA A</button>
-                    <button id="track-b-btn" class="track-tab flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase bg-slate-900 text-slate-500 hover:bg-slate-800 relative z-10">
+                    <button id="track-a-btn" class="track-tab active-a flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase text-white relative z-10 editor-panel">PISTA A</button>
+                    <button id="track-b-btn" class="track-tab flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase bg-slate-900 text-slate-500 hover:bg-slate-800 relative z-10 editor-panel">
                         PISTA B <span id="track-b-status" class="ml-1 md:ml-2 text-[9px] md:text-[10px] bg-slate-800 px-1.5 md:px-2 py-0.5 rounded text-slate-400 border border-slate-700">OFF</span>
                     </button>
                 </div>
@@ -187,7 +190,7 @@
                 </div>
             </div>
 
-            <!-- PANEL IZQUIERDO: CONTROLES MAESTROS Y MIXER -->
+            <!-- PANEL IZQUIERDO: CONTROLES MAESTROS -->
             <div class="lg:col-span-4 flex flex-col space-y-4">
                 
                 <div class="bg-white p-4 md:p-5 rounded-xl shadow-sm border border-slate-200 flex flex-col relative overflow-hidden" id="bpm-container">
@@ -207,7 +210,7 @@
                     </button>
                 </div>
 
-                <div class="w-full flex justify-between items-center bg-white p-3 md:p-4 rounded-xl shadow-sm border border-slate-200">
+                <div class="editor-panel w-full flex justify-between items-center bg-white p-3 md:p-4 rounded-xl shadow-sm border border-slate-200">
                     <span class="font-bold text-slate-700 uppercase text-[10px] md:text-xs tracking-widest leading-tight">Tiempos<br>Compás</span>
                     <div class="flex items-center space-x-2">
                         <button id="beats-minus" class="w-7 h-7 md:w-8 md:h-8 rounded text-slate-600 bg-slate-100 hover:bg-slate-200 font-bold text-base md:text-lg border border-slate-200 flex items-center justify-center">-</button>
@@ -217,21 +220,21 @@
                 </div>
 
                 <!-- PANEL DE MEZCLA -->
-                <div class="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-slate-200 flex flex-col space-y-4">
+                <div class="editor-panel bg-white rounded-xl p-4 md:p-5 shadow-sm border border-slate-200 flex flex-col space-y-4">
                     <span class="font-bold text-slate-400 uppercase text-[9px] md:text-[10px] tracking-widest border-b border-slate-100 pb-2">Mixer y Preferencias</span>
                     
                     <div class="space-y-2 md:space-y-3">
                         <div class="flex items-center justify-between text-[10px] md:text-xs">
                             <span class="font-bold text-red-500 w-12 md:w-16">Acento</span>
-                            <input type="range" id="vol-accent" min="0" max="100" value="100" class="mixer-slider w-full ml-2">
+                            <input type="range" id="vol-accent" min="0" max="100" value="100" class="mixer-slider w-full ml-2" title="Volumen logarítmico">
                         </div>
                         <div class="flex items-center justify-between text-[10px] md:text-xs">
                             <span class="font-bold text-blue-500 w-12 md:w-16">Normal</span>
-                            <input type="range" id="vol-normal" min="0" max="100" value="70" class="mixer-slider w-full ml-2">
+                            <input type="range" id="vol-normal" min="0" max="100" value="70" class="mixer-slider w-full ml-2" title="Volumen logarítmico">
                         </div>
                         <div class="flex items-center justify-between text-[10px] md:text-xs">
                             <span class="font-bold text-slate-500 w-12 md:w-16">Pista B</span>
-                            <input type="range" id="vol-trackB" min="0" max="100" value="50" class="mixer-slider w-full ml-2">
+                            <input type="range" id="vol-trackB" min="0" max="100" value="50" class="mixer-slider w-full ml-2" title="Volumen logarítmico">
                         </div>
                     </div>
 
@@ -267,8 +270,8 @@
                 </button>
             </div>
 
-            <!-- PANEL DERECHO: CONSTRUCTOR / EDICIÓN ESTÁTICA -->
-            <div class="lg:col-span-8 flex flex-col space-y-4 overflow-hidden">
+            <!-- PANEL DERECHO: CONSTRUCTOR DE EDICIÓN -->
+            <div class="lg:col-span-8 flex flex-col space-y-4 overflow-hidden editor-panel">
                 
                 <div class="bg-white rounded-xl p-3 md:p-4 border border-slate-200 shadow-sm max-w-full">
                     <span class="text-[9px] md:text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">Tiempos del Compás a Editar <span class="lowercase font-normal ml-1 tracking-normal hidden sm:inline">(Flechas ← →)</span></span>
@@ -313,6 +316,7 @@
         let currentBPM = 120;
         let beatsPerBar = 4;
         let isFocusMode = false;
+        let isAppLocked = false; 
         
         let volAccent = 1.0, volNormal = 0.7, volTrackB = 0.5;
         let isFlashOn = false, isTrainerOn = false, isSolkattuOn = true;
@@ -328,7 +332,7 @@
         
         let audioContext = null, isPlaying = false, currentBeat = 0, nextBeatTime = 0.0, timerWorker = null;
 
-        // --- 2. DICTIONARY ---
+        // --- 2. DICTIONARY (Expanded) ---
         const solkattuDict = {
             1: [ ["Ta"], ["Tha"] ],
             2: [ ["Ta", "Ka"], ["Ta", "Ke"] ],
@@ -337,7 +341,8 @@
             5: [ ["Ta", "Di", "Gi", "Na", "Thom"], ["Ta", "Ki", "Ta", "Ta", "Ka"], ["Ta", "Ka", "Ta", "Ki", "Ta"] ],
             6: [ ["Ta", "Ki", "Ta", "Ta", "Ki", "Ta"], ["Ta", "Ka", "Di", "Mi", "Ta", "Ka"], ["Ta", "Ka", "Ta", "Ka", "Di", "Mi"] ],
             7: [ ["Ta", "Ki", "Ta", "Ta", "Ka", "Di", "Mi"], ["Ta", "Ka", "Di", "Mi", "Ta", "Ki", "Ta"] ],
-            8: [ ["Ta", "Ka", "Di", "Mi", "Ta", "Ka", "Di", "Mi"], ["Ta", "Ka", "Di", "Mi", "Ta", "Ka", "Ju", "Nu"] ]
+            8: [ ["Ta", "Ka", "Di", "Mi", "Ta", "Ka", "Di", "Mi"], ["Ta", "Ka", "Di", "Mi", "Ta", "Ka", "Ju", "Nu"] ],
+            9: [ ["Ta", "Ka", "Di", "Mi", "Ta", "Di", "Gi", "Na", "Thom"], ["Ta", "Ki", "Ta", "Ta", "Ki", "Ta", "Ta", "Ki", "Ta"] ]
         };
 
         // --- 3. INIT & STORAGE ---
@@ -348,16 +353,20 @@
             timerWorker.onmessage = function(e) { if (e.data === "tick") scheduler(); };
         }
 
+        let saveTimeout = null;
         function saveState() {
-            localStorage.setItem('jmrr_metronome_v13', JSON.stringify({ 
-                bpm: currentBPM, beats: beatsPerBar, trkA: tracks['A'], trkB: tracks['B'], 
-                enbB: isTrackBEnabled, vAcc: volAccent, vNorm: volNormal, vTB: volTrackB,
-                flash: isFlashOn, trainer: isTrainerOn, solk: isSolkattuOn
-            }));
+            if(saveTimeout) clearTimeout(saveTimeout);
+            saveTimeout = setTimeout(() => {
+                localStorage.setItem('jmrr_metronome_v15', JSON.stringify({ 
+                    bpm: currentBPM, beats: beatsPerBar, trkA: tracks['A'], trkB: tracks['B'], 
+                    enbB: isTrackBEnabled, vAcc: volAccent, vNorm: volNormal, vTB: volTrackB,
+                    flash: isFlashOn, trainer: isTrainerOn, solk: isSolkattuOn, lock: isAppLocked
+                }));
+            }, 500); 
         }
 
         function loadState() {
-            const saved = localStorage.getItem('jmrr_metronome_v13');
+            const saved = localStorage.getItem('jmrr_metronome_v15');
             if (saved) {
                 try {
                     const s = JSON.parse(saved);
@@ -368,16 +377,18 @@
                     if (s.vTB !== undefined) volTrackB = s.vTB;
                     if (s.flash !== undefined) isFlashOn = s.flash; if (s.trainer !== undefined) isTrainerOn = s.trainer;
                     if (s.solk !== undefined) isSolkattuOn = s.solk;
+                    if (s.lock !== undefined) isAppLocked = s.lock;
                 } catch(e) {}
             }
         }
 
         function resetState() { 
-            localStorage.removeItem('jmrr_metronome_v13'); 
+            localStorage.removeItem('jmrr_metronome_v15'); 
             currentBPM = 120; beatsPerBar = 4;
             tracks = { 'A': Array.from({length: 4}, createDefaultBeat), 'B': Array.from({length: 4}, createDefaultBeat) };
             activeEditTrack = 'A'; isTrackBEnabled = false; selectedBeatIndex = 0;
             volAccent = 1.0; volNormal = 0.7; volTrackB = 0.5; isFlashOn = false; isTrainerOn = false; isSolkattuOn = true;
+            isAppLocked = false;
             
             if(isPlaying) stopMetronome();
 
@@ -391,6 +402,7 @@
             document.getElementById('toggle-trainer').checked = false;
             document.getElementById('toggle-solkattu').checked = true;
             
+            updateLockUI();
             updateTrackUI(); updateBeatTabs(); renderSimpleTracker();
             if(!isFocusMode) renderNotation();
         }
@@ -401,6 +413,10 @@
         const tapBtn = document.getElementById('tap-btn');
         const btnReset = document.getElementById('btn-reset');
         const btnHelp = document.getElementById('btn-help');
+        const btnLock = document.getElementById('btn-lock');
+        const iconUnlocked = document.getElementById('icon-unlocked');
+        const iconLocked = document.getElementById('icon-locked');
+        const textLock = document.getElementById('text-lock');
         const closeHelpBtn = document.getElementById('close-help-btn');
         const helpModalBackdrop = document.getElementById('help-modal-backdrop');
         const helpModalContent = document.getElementById('help-modal-content');
@@ -446,12 +462,22 @@
                 let length = end - start;
 
                 let variantIndex = variantsMap[start] || 0;
-                let safeLength = length > 8 ? 8 : length; 
-                let options = solkattuDict[safeLength] || [ new Array(length).fill("Ta") ];
+                let options = solkattuDict[length];
+                
+                if(!options) {
+                    let fallbackGroup = [];
+                    let rem = length;
+                    while(rem > 0) {
+                        if (rem >= 4) { fallbackGroup.push("Ta","Ka","Di","Mi"); rem -= 4; }
+                        else if (rem === 3) { fallbackGroup.push("Ta","Ki","Ta"); rem -= 3; }
+                        else if (rem === 2) { fallbackGroup.push("Ta","Ka"); rem -= 2; }
+                        else { fallbackGroup.push("Ta"); rem -= 1; }
+                    }
+                    options = [fallbackGroup];
+                }
                 
                 variantIndex = variantIndex % options.length;
                 let groupSyllables = options[variantIndex];
-                if(length > 8) groupSyllables = new Array(length).fill("Ta");
 
                 for(let i = 0; i < length; i++) {
                     syllables.push((states[start + i] === 3) ? "—" : groupSyllables[i]);
@@ -462,6 +488,7 @@
         }
 
         function cycleSolkattuVariant(beatIdx, startIdx) {
+            if (isAppLocked) return;
             const beatData = tracks[activeEditTrack][beatIdx];
             if(!beatData.syllableVariants) beatData.syllableVariants = {};
             beatData.syllableVariants[startIdx] = (beatData.syllableVariants[startIdx] || 0) + 1; 
@@ -470,11 +497,11 @@
 
         function updateTrackUI() {
             if (activeEditTrack === 'A') {
-                trackABtn.className = "track-tab active-a flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase text-white relative z-10";
-                trackBBtn.className = "track-tab flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase bg-slate-900 text-slate-500 hover:bg-slate-800 relative z-10";
+                trackABtn.className = "track-tab active-a flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase text-white relative z-10 editor-panel";
+                trackBBtn.className = "track-tab flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase bg-slate-900 text-slate-500 hover:bg-slate-800 relative z-10 editor-panel";
             } else {
-                trackABtn.className = "track-tab flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase bg-slate-900 text-slate-500 hover:bg-slate-800 relative z-10";
-                trackBBtn.className = "track-tab active-b flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase text-white relative z-10";
+                trackABtn.className = "track-tab flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase bg-slate-900 text-slate-500 hover:bg-slate-800 relative z-10 editor-panel";
+                trackBBtn.className = "track-tab active-b flex-1 py-3 md:py-4 font-bold text-xs md:text-sm tracking-widest uppercase text-white relative z-10 editor-panel";
             }
             const trackBStatus = document.getElementById('track-b-status');
             if (trackBStatus) {
@@ -484,7 +511,7 @@
         }
 
         function changeBeatsPerBar(newCount) {
-            if(newCount < 1 || newCount > 16) return;
+            if(isAppLocked || newCount < 1 || newCount > 16) return;
             if (newCount > beatsPerBar) {
                 for (let i = beatsPerBar; i < newCount; i++) { tracks['A'].push(createDefaultBeat()); tracks['B'].push(createDefaultBeat()); }
             } else {
@@ -507,13 +534,17 @@
                 tab.className = `beat-tab px-3 py-1.5 md:px-4 md:py-2 rounded-lg border-2 font-bold text-[10px] md:text-xs tracking-widest flex-shrink-0 ${i === selectedBeatIndex ? `active text-white ${themeClass}` : 'bg-slate-100 border-slate-300 text-slate-600'}`;
                 tab.innerHTML = `T${i + 1} <span class="block text-[9px] md:text-[10px] font-normal opacity-75 mt-0.5 md:mt-1">[${desc}]</span>`;
                 tab.id = `beat-tab-${i}`;
-                tab.onclick = () => { selectedBeatIndex = i; updateBeatTabs(); if(!isFocusMode) renderNotation(); };
+                tab.onclick = () => { 
+                    if(isAppLocked) return;
+                    selectedBeatIndex = i; updateBeatTabs(); if(!isFocusMode) renderNotation(); 
+                };
                 beatTabsContainer.appendChild(tab);
             }
             refreshEditorUI();
         }
 
         function setBaseForSelectedBeat(newBase) {
+            if(isAppLocked) return;
             const beatData = tracks[activeEditTrack][selectedBeatIndex];
             beatData.base = newBase; beatData.subDivs = new Array(newBase).fill(1);
             beatData.states = new Array(newBase).fill(1); beatData.states[0] = activeEditTrack === 'A' ? 2 : 1;
@@ -522,6 +553,7 @@
         }
 
         function setNestedSubdivision(fracIndex, newDivVal) {
+            if(isAppLocked) return;
             const beatData = tracks[activeEditTrack][selectedBeatIndex];
             beatData.subDivs[fracIndex] = newDivVal;
             const newTotal = beatData.subDivs.reduce((a,b)=>a+b, 0);
@@ -531,6 +563,7 @@
         }
 
         function cycleNoteState(beatIdx, globalNoteIdx) {
+            if(isAppLocked) return;
             const beatData = tracks[activeEditTrack][beatIdx];
             let st = beatData.states[globalNoteIdx];
             if (st === 2) st = 1; else if (st === 1) st = 3; else if (st === 3) st = 0; else st = 2;
@@ -551,7 +584,7 @@
                 group.className = 'flex flex-col items-center bg-white p-1.5 md:p-2 rounded shadow-sm border border-slate-200 min-w-[50px] md:min-w-[65px]';
                 const label = document.createElement('span'); label.className = 'text-[9px] md:text-[10px] font-bold text-slate-400 uppercase mb-1'; label.textContent = `Fracción ${i+1}`; group.appendChild(label);
                 const divSelect = document.createElement('select'); divSelect.className = 'bg-slate-100 border border-slate-300 text-slate-700 text-[10px] md:text-xs rounded block w-full p-1 cursor-pointer font-bold outline-none';
-                [1,2,3,4,5,6,7,8].forEach(val => {
+                [1,2,3,4,5,6,7,8,9,10,11,12].forEach(val => {
                     const opt = document.createElement('option'); opt.value = val; opt.textContent = `${val} nota(s)`;
                     if (beatData.subDivs[i] === val) opt.selected = true; divSelect.appendChild(opt);
                 });
@@ -606,12 +639,13 @@
         toggleSolkattuEl.addEventListener('change', (e) => { isSolkattuOn = e.target.checked; if(!isFocusMode) renderNotation(); saveState(); });
 
         document.getElementById('track-a-btn').addEventListener('click', () => {
-            if(activeEditTrack === 'A') return;
+            if(isAppLocked || activeEditTrack === 'A') return;
             activeEditTrack = 'A';
             updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation();
         });
 
         document.getElementById('track-b-btn').addEventListener('click', () => {
+            if(isAppLocked) return;
             if (activeEditTrack === 'B') {
                 isTrackBEnabled = !isTrackBEnabled;
             } else {
@@ -622,6 +656,7 @@
         });
 
         document.getElementById('notation-svg').addEventListener('click', (e) => {
+            if(isAppLocked) return;
             const hitbox = e.target.closest('.beat-hitbox');
             const interactiveNote = e.target.closest('.interactive-note');
             const interactiveText = e.target.closest('.interactive-text');
@@ -641,7 +676,28 @@
             else if (interactiveText) cycleSolkattuVariant(targetB, parseInt(interactiveText.getAttribute('data-start'))); 
         });
 
-        // Focus & Help
+        // Focus, Help & Lock
+        function toggleLock() {
+            isAppLocked = !isAppLocked;
+            document.body.classList.toggle('app-locked', isAppLocked);
+            if (isAppLocked) {
+                btnLock.classList.replace('text-slate-300', 'text-amber-400');
+                btnLock.classList.replace('border-slate-600', 'border-amber-400');
+                iconUnlocked.classList.add('hidden');
+                iconLocked.classList.remove('hidden');
+                textLock.textContent = "Cerrado";
+            } else {
+                btnLock.classList.replace('text-amber-400', 'text-slate-300');
+                btnLock.classList.replace('border-amber-400', 'border-slate-600');
+                iconLocked.classList.add('hidden');
+                iconUnlocked.classList.remove('hidden');
+                textLock.textContent = "Abierto";
+            }
+            saveState();
+        }
+        function updateLockUI() { if(isAppLocked) { isAppLocked = false; toggleLock(); } } 
+        btnLock.addEventListener('click', toggleLock);
+
         function toggleFocusMode() {
             isFocusMode = !isFocusMode;
             if (isFocusMode) {
@@ -673,17 +729,18 @@
             switch(e.code) {
                 case 'Space': isPlaying ? stopMetronome() : startMetronome(); break;
                 case 'KeyT': triggerTapTempo(); break;
+                case 'KeyL': toggleLock(); break;
                 case 'KeyM': toggleFocusMode(); break;
-                case 'KeyA': if(activeEditTrack !== 'A') { activeEditTrack = 'A'; updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation(); } break;
-                case 'KeyB': if(activeEditTrack === 'B') { isTrackBEnabled = !isTrackBEnabled; } else { activeEditTrack = 'B'; if (!isTrackBEnabled) isTrackBEnabled = true; } updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation(); saveState(); break;
-                case 'KeyF': toggleFlashEl.checked = !toggleFlashEl.checked; isFlashOn = toggleFlashEl.checked; saveState(); break;
-                case 'KeyE': toggleTrainerEl.checked = !toggleTrainerEl.checked; isTrainerOn = toggleTrainerEl.checked; if(!isTrainerOn) { trainerAlert.classList.add('hidden'); isMutedByTrainer = false; } saveState(); break;
-                case 'KeyS': toggleSolkattuEl.checked = !toggleSolkattuEl.checked; isSolkattuOn = toggleSolkattuEl.checked; if(!isFocusMode) renderNotation(); saveState(); break;
+                case 'KeyA': if(isAppLocked) return; if(activeEditTrack !== 'A') { activeEditTrack = 'A'; updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation(); } break;
+                case 'KeyB': if(isAppLocked) return; if(activeEditTrack === 'B') { isTrackBEnabled = !isTrackBEnabled; } else { activeEditTrack = 'B'; if (!isTrackBEnabled) isTrackBEnabled = true; } updateTrackUI(); updateBeatTabs(); if(!isFocusMode) renderNotation(); saveState(); break;
+                case 'KeyF': if(isAppLocked) return; toggleFlashEl.checked = !toggleFlashEl.checked; isFlashOn = toggleFlashEl.checked; saveState(); break;
+                case 'KeyE': if(isAppLocked) return; toggleTrainerEl.checked = !toggleTrainerEl.checked; isTrainerOn = toggleTrainerEl.checked; if(!isTrainerOn) { trainerAlert.classList.add('hidden'); isMutedByTrainer = false; } saveState(); break;
+                case 'KeyS': if(isAppLocked) return; toggleSolkattuEl.checked = !toggleSolkattuEl.checked; isSolkattuOn = toggleSolkattuEl.checked; if(!isFocusMode) renderNotation(); saveState(); break;
                 case 'KeyH': helpModalBackdrop.classList.contains('hidden') ? openHelp() : closeHelp(); break;
                 case 'ArrowUp': if(currentBPM < 300) updateBPM(currentBPM + 1); break;
                 case 'ArrowDown': if(currentBPM > 30) updateBPM(currentBPM - 1); break;
-                case 'ArrowRight': selectedBeatIndex = (selectedBeatIndex + 1) % beatsPerBar; updateBeatTabs(); if(!isFocusMode) renderNotation(); break;
-                case 'ArrowLeft': selectedBeatIndex = (selectedBeatIndex - 1 + beatsPerBar) % beatsPerBar; updateBeatTabs(); if(!isFocusMode) renderNotation(); break;
+                case 'ArrowRight': if(isAppLocked) return; selectedBeatIndex = (selectedBeatIndex + 1) % beatsPerBar; updateBeatTabs(); if(!isFocusMode) renderNotation(); break;
+                case 'ArrowLeft': if(isAppLocked) return; selectedBeatIndex = (selectedBeatIndex - 1 + beatsPerBar) % beatsPerBar; updateBeatTabs(); if(!isFocusMode) renderNotation(); break;
             }
         });
 
@@ -709,9 +766,7 @@
             const konnakolY = 150; 
 
             let svgHTML = '';
-            let lastActiveX = -1; 
 
-            // Playback Highlight Backgrounds
             for (let b = 0; b < beatsPerBar; b++) {
                 const offsetX = padX + (b * beatWidth);
                 svgHTML += `<rect id="playback-bg-${b}" x="${offsetX + 2}" y="10" width="${beatWidth - 4}" height="160" fill="transparent" rx="4" class="transition-colors duration-75 pointer-events-none" />`;
@@ -723,6 +778,7 @@
                 if(b > 0) svgHTML += `<line x1="${offsetX}" y1="20" x2="${offsetX}" y2="160" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4 4" class="pointer-events-none"/>`;
             }
 
+            let lastActiveX = -1; 
             for (let b = 0; b < beatsPerBar; b++) {
                 const bData = activeData[b];
                 const offsetX = padX + (b * beatWidth);
@@ -817,20 +873,41 @@
         function playTone(track, time, duration, isAccent, isMainBeat, isTied) {
             if (isMutedByTrainer) return; 
 
+            // Click Acústico (Ruido blanco filtrado para ataque percusivo)
+            const bufferSize = audioContext.sampleRate * 0.05; 
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+            
+            const noise = audioContext.createBufferSource();
+            noise.buffer = buffer;
+            const noiseFilter = audioContext.createBiquadFilter();
+            noiseFilter.type = 'bandpass';
+            noiseFilter.frequency.value = isMainBeat ? 2500 : (track === 'A' ? 1500 : 800);
+            
+            // Tono Oscilador (Cuerpo del sonido)
             const osc = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
+            const noiseGain = audioContext.createGain();
             
             if (track === 'A') {
-                osc.frequency.setValueAtTime(isMainBeat ? 1500 : (isAccent ? 1000 : 700), time);
-                osc.frequency.exponentialRampToValueAtTime(isMainBeat ? 800 : (isAccent ? 500 : 350), time + 0.04);
+                osc.frequency.setValueAtTime(isMainBeat ? 1200 : (isAccent ? 800 : 600), time);
+                osc.frequency.exponentialRampToValueAtTime(isMainBeat ? 600 : (isAccent ? 400 : 300), time + 0.04);
                 osc.type = 'sine';
             } else {
-                osc.frequency.setValueAtTime(isMainBeat ? 600 : (isAccent ? 400 : 250), time);
-                osc.frequency.exponentialRampToValueAtTime(isMainBeat ? 300 : (isAccent ? 200 : 150), time + 0.04);
+                osc.frequency.setValueAtTime(isMainBeat ? 500 : (isAccent ? 350 : 200), time);
+                osc.frequency.exponentialRampToValueAtTime(isMainBeat ? 250 : (isAccent ? 150 : 100), time + 0.04);
                 osc.type = 'triangle'; 
             }
             
-            let dynamicVol = track === 'B' ? volTrackB : (isAccent || isMainBeat ? volAccent : volNormal);
+            let rawVol = track === 'B' ? volTrackB : (isAccent || isMainBeat ? volAccent : volNormal);
+            let dynamicVol = Math.pow(rawVol, 2); 
+
+            // Envolvente de Ruido
+            noiseGain.gain.setValueAtTime(dynamicVol * 0.8, time);
+            noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.02);
+
+            // Envolvente de Oscilador
             gainNode.gain.setValueAtTime(0, time);
             gainNode.gain.linearRampToValueAtTime(dynamicVol, time + 0.002); 
             
@@ -843,7 +920,10 @@
                 gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
                 osc.start(time); osc.stop(time + 0.1);
             }
+
+            noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(audioContext.destination);
             osc.connect(gainNode); gainNode.connect(audioContext.destination);
+            noise.start(time);
         }
 
         function getDurationOfNote(bData, globalIdx, secondsPerBeat) {
@@ -931,12 +1011,21 @@
                         }
                     }
                     
+                    // Auto-Scroll Inteligente de la Pauta SVG
                     if (!isFocusMode) {
-                        for(let i=0; i<beatsPerBar; i++){
-                            const bg = document.getElementById(`playback-bg-${i}`);
-                            if(bg) {
-                                if(i === beatNumber) bg.setAttribute('fill', 'rgba(59, 130, 246, 0.15)');
-                                else bg.setAttribute('fill', 'transparent');
+                        const bgRect = document.getElementById(`playback-bg-${beatNumber}`);
+                        if(bgRect) {
+                            // Centrar el compás actual en el contenedor
+                            const scrollTarget = parseFloat(bgRect.getAttribute('x')) - (svgWrapper.clientWidth / 2) + (parseFloat(bgRect.getAttribute('width')) / 2);
+                            svgWrapper.scrollTo({ left: scrollTarget, behavior: 'smooth' });
+                            
+                            // Iluminar el fondo de reproducción
+                            for(let i=0; i<beatsPerBar; i++){
+                                const bg = document.getElementById(`playback-bg-${i}`);
+                                if(bg) {
+                                    if(i === beatNumber) bg.setAttribute('fill', 'rgba(59, 130, 246, 0.15)');
+                                    else bg.setAttribute('fill', 'transparent');
+                                }
                             }
                         }
                     }
@@ -1044,6 +1133,7 @@
             updateBeatTabs(); 
             renderSimpleTracker();
             if(!isFocusMode) renderNotation(); 
+            if(isAppLocked) { isAppLocked = false; toggleLock(); }
             
             window.addEventListener('resize', () => { if(!isFocusMode) renderNotation(); });
             initWorker();
