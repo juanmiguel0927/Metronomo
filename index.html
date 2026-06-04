@@ -120,17 +120,19 @@
 
     <div class="w-full max-w-7xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-300 relative z-10">
         
-        <div class="absolute top-4 right-4 z-20 flex gap-2">
-            <button id="btn-help" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-white transition-colors border border-slate-600 hover:border-slate-400 px-3 py-1.5 rounded-md bg-slate-800/90 cursor-pointer flex items-center gap-1 shadow" title="Ayuda y Atajos (H)">
-                <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Ayuda
-            </button>
-            <button id="btn-reset" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-red-400 transition-colors border border-slate-600 hover:border-red-400 px-3 py-1.5 rounded-md bg-slate-800/90 cursor-pointer shadow">
-                Reset Sesión
-            </button>
-        </div>
+        <!-- Header con Botones de Utilidad adaptables -->
+        <div class="bg-slate-900 text-white pt-4 pb-6 md:py-8 flex flex-col items-center relative border-b border-slate-800 w-full">
+            
+            <div class="w-full flex justify-end px-4 mb-2 md:absolute md:top-4 md:right-4 md:mb-0 md:px-0 z-20 gap-2">
+                <button id="btn-help" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-white transition-colors border border-slate-600 hover:border-slate-400 px-3 py-1.5 rounded-md bg-slate-800/90 cursor-pointer flex items-center gap-1 shadow" title="Ayuda y Atajos (H)">
+                    <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> Ayuda
+                </button>
+                <button id="btn-reset" class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-red-400 transition-colors border border-slate-600 hover:border-red-400 px-3 py-1.5 rounded-md bg-slate-800/90 cursor-pointer shadow">
+                    Reset Sesión
+                </button>
+            </div>
 
-        <div class="bg-slate-900 text-white p-6 md:p-8 flex flex-col items-center justify-center relative border-b border-slate-800">
-            <h1 class="text-3xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 uppercase drop-shadow-sm">Metrónomo</h1>
+            <h1 class="text-3xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 uppercase drop-shadow-sm mt-1 md:mt-0">Metrónomo</h1>
         </div>
 
         <div class="p-3 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 bg-slate-50 w-full overflow-hidden">
@@ -347,7 +349,7 @@
         }
 
         function saveState() {
-            localStorage.setItem('jmrr_metronome_v12', JSON.stringify({ 
+            localStorage.setItem('jmrr_metronome_v13', JSON.stringify({ 
                 bpm: currentBPM, beats: beatsPerBar, trkA: tracks['A'], trkB: tracks['B'], 
                 enbB: isTrackBEnabled, vAcc: volAccent, vNorm: volNormal, vTB: volTrackB,
                 flash: isFlashOn, trainer: isTrainerOn, solk: isSolkattuOn
@@ -355,7 +357,7 @@
         }
 
         function loadState() {
-            const saved = localStorage.getItem('jmrr_metronome_v12');
+            const saved = localStorage.getItem('jmrr_metronome_v13');
             if (saved) {
                 try {
                     const s = JSON.parse(saved);
@@ -371,7 +373,7 @@
         }
 
         function resetState() { 
-            localStorage.removeItem('jmrr_metronome_v12'); 
+            localStorage.removeItem('jmrr_metronome_v13'); 
             currentBPM = 120; beatsPerBar = 4;
             tracks = { 'A': Array.from({length: 4}, createDefaultBeat), 'B': Array.from({length: 4}, createDefaultBeat) };
             activeEditTrack = 'A'; isTrackBEnabled = false; selectedBeatIndex = 0;
