@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Metrónomo Solkattu</title>
+    <title>Metrónomo</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         input[type=range]::-webkit-slider-thumb {
@@ -22,8 +22,6 @@
         .beat-tab.active { background-color: #3b82f6; color: white; border-color: #2563eb; transform: scale(1.05); }
 
         .track-tab { transition: all 0.2s; border-bottom: 2px solid transparent; cursor: pointer; }
-        .track-tab.active-a { background-color: #1e293b; color: white !important; border-color: #3b82f6; }
-        .track-tab.active-b { background-color: #064e3b; color: white !important; border-color: #10b981; }
 
         .step-btn { transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1); }
         .step-btn:active { transform: scale(0.92); }
@@ -90,16 +88,17 @@
                 <div>
                     <h3 class="text-lg font-bold text-blue-600 mb-3 uppercase tracking-wider">Conceptos Core</h3>
                     <ul class="space-y-4">
-                        <li><strong class="text-slate-800">1. Pistas como Pestañas:</strong> Usa los botones superiores (PISTA A / PISTA B) para alternar qué capa estás viendo y editando. La Pista B suena más grave.</li>
-                        <li><strong class="text-slate-800">2. Subdivisión Anidada:</strong> Selecciona el compás en la parte inferior, define una Base (ej. 2 Corcheas) y anida fracciones para hacer polirritmias mixtas (ej. 3+2).</li>
-                        <li><strong class="text-slate-800">3. Inteligencia Solkattu:</strong> El texto se adapta a tus acentos. <strong>Clic en el texto en la pauta</strong> para rotar las sílabas.</li>
-                        <li><strong class="text-slate-800">4. Auto-Scroll:</strong> La pauta SVG se moverá sola siguiendo el metrónomo, pero tu panel de edición se mantendrá fijo donde necesites.</li>
-                        <li><strong class="text-slate-800">5. Entrenador de Silencios:</strong> Al activarlo, el 4to compás siempre estará mudo, forzándote a mantener el pulso internamente.</li>
+                        <li><strong class="text-slate-800">1. Pistas como Pestañas:</strong> Usa los botones superiores (PISTA A / PISTA B) para alternar qué capa estás viendo y editando. La Pista B suena más grave para las polirritmias.</li>
+                        <li><strong class="text-slate-800">2. Subdivisión Anidada:</strong> Selecciona el compás en la parte inferior, define una Base (ej. 2 Corcheas) y luego anida fracciones. Ej: Fracción 1 en "3" y Fracción 2 en "2" crea un seisillo mixto de 3+2.</li>
+                        <li><strong class="text-slate-800">3. Inteligencia Solkattu:</strong> El texto se adapta automáticamente a tus acentos. <strong>Clic en el texto directamente en la pauta</strong> para rotar las sílabas (Ej. 5 notas alternan entre TaDiGiNaThom, 3+2 o 2+3).</li>
+                        <li><strong class="text-slate-800">4. Interfaz Desligada:</strong> La pauta SVG arriba muestra el progreso del metrónomo mediante un destello de luz y *Auto-Scroll*, pero tu <strong>selección de edición</strong> permanece estática donde hagas clic.</li>
+                        <li><strong class="text-slate-800">5. Bloqueo de Interfaz:</strong> Usa el candado o la tecla "L" para congelar el panel de edición, evitando accidentes en pantallas táctiles mientras ensayas.</li>
                     </ul>
                 </div>
                 
                 <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
                     <h3 class="text-lg font-bold text-amber-600 mb-3 uppercase tracking-wider">Atajos de Teclado Globales</h3>
+                    <p class="text-xs text-slate-400 mb-4 italic">Se desactivan si estás escribiendo el BPM manualmente.</p>
                     <table class="w-full text-left">
                         <tbody class="divide-y divide-slate-200">
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">Espacio</kbd></td><td class="py-2">Reproducir / Detener</td></tr>
@@ -109,7 +108,9 @@
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">A</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">B</kbd></td><td class="py-2">Alternar Pista A / Pista B</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">F</kbd></td><td class="py-2">Toggle Flash Visual</td></tr>
                             <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">E</kbd></td><td class="py-2">Toggle Entrenador Silencios</td></tr>
-                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↑</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↓</kbd></td><td class="py-2">Subir/Bajar BPM</td></tr>
+                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">S</kbd></td><td class="py-2">Mostrar/Ocultar Solkattu</td></tr>
+                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↑</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">↓</kbd></td><td class="py-2">Subir/Bajar BPM (+1 / -1)</td></tr>
+                            <tr><td class="py-2"><kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">←</kbd> / <kbd class="bg-white border border-slate-300 shadow-sm px-2 py-1 rounded font-mono font-bold text-slate-700">→</kbd></td><td class="py-2">Navegar panel de edición</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -119,7 +120,7 @@
 
     <div class="w-full max-w-7xl bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col border border-slate-300 relative z-10">
         
-        <!-- Header Controls -->
+        <!-- Header con Botones de Utilidad adaptables -->
         <div class="bg-slate-900 text-white pt-4 pb-6 md:py-8 flex flex-col items-center relative border-b border-slate-800 w-full">
             
             <div class="w-full flex justify-end px-4 mb-2 md:absolute md:top-4 md:right-4 md:mb-0 md:px-0 z-20 gap-2">
@@ -181,7 +182,8 @@
                         </svg>
                     </div>
 
-                    <div id="simple-tracker" class="w-full bg-slate-800 rounded-lg p-4 md:p-8 hidden flex justify-center items-center gap-2 md:gap-4 min-h-[150px] overflow-x-auto hide-scrollbar scroll-smooth">
+                    <div id="simple-tracker" class="w-full bg-slate-800 rounded-lg py-6 md:py-10 hidden overflow-x-auto hide-scrollbar scroll-smooth relative">
+                        <!-- Contenedor interno forzará la alineación segura -->
                     </div>
                     
                     <div id="trainer-alert" class="w-full bg-amber-500/20 border border-amber-500/50 text-amber-200 text-[10px] md:text-xs font-bold uppercase tracking-widest text-center py-2 rounded-lg mt-2 hidden transition-all">
@@ -357,7 +359,7 @@
         function saveState() {
             if(saveTimeout) clearTimeout(saveTimeout);
             saveTimeout = setTimeout(() => {
-                localStorage.setItem('jmrr_metronome_v15', JSON.stringify({ 
+                localStorage.setItem('jmrr_metronome_v17', JSON.stringify({ 
                     bpm: currentBPM, beats: beatsPerBar, trkA: tracks['A'], trkB: tracks['B'], 
                     enbB: isTrackBEnabled, vAcc: volAccent, vNorm: volNormal, vTB: volTrackB,
                     flash: isFlashOn, trainer: isTrainerOn, solk: isSolkattuOn, lock: isAppLocked
@@ -366,7 +368,7 @@
         }
 
         function loadState() {
-            const saved = localStorage.getItem('jmrr_metronome_v15');
+            const saved = localStorage.getItem('jmrr_metronome_v17');
             if (saved) {
                 try {
                     const s = JSON.parse(saved);
@@ -383,7 +385,7 @@
         }
 
         function resetState() { 
-            localStorage.removeItem('jmrr_metronome_v15'); 
+            localStorage.removeItem('jmrr_metronome_v17'); 
             currentBPM = 120; beatsPerBar = 4;
             tracks = { 'A': Array.from({length: 4}, createDefaultBeat), 'B': Array.from({length: 4}, createDefaultBeat) };
             activeEditTrack = 'A'; isTrackBEnabled = false; selectedBeatIndex = 0;
@@ -698,6 +700,14 @@
         function updateLockUI() { if(isAppLocked) { isAppLocked = false; toggleLock(); } } 
         btnLock.addEventListener('click', toggleLock);
 
+        function smoothScrollContainer(container, targetEl) {
+            if (!container || !targetEl) return;
+            const containerRect = container.getBoundingClientRect();
+            const targetRect = targetEl.getBoundingClientRect();
+            const scrollTarget = container.scrollLeft + (targetRect.left - containerRect.left) - (container.clientWidth / 2) + (targetRect.width / 2);
+            container.scrollTo({ left: scrollTarget, behavior: 'smooth' });
+        }
+
         function toggleFocusMode() {
             isFocusMode = !isFocusMode;
             if (isFocusMode) {
@@ -864,7 +874,7 @@
             svgLayer.innerHTML = svgHTML;
         }
 
-        // --- 8. AUDIO & ENGINE ---
+        // --- 8. AUDIO ENGINE (CORRECTED FOR PERCUSSION) ---
         function initAudio() {
             if (!audioContext) audioContext = new (window.AudioContext || window.webkitAudioContext)();
             if (audioContext.state === 'suspended') audioContext.resume();
@@ -873,57 +883,38 @@
         function playTone(track, time, duration, isAccent, isMainBeat, isTied) {
             if (isMutedByTrainer) return; 
 
-            // Click Acústico (Ruido blanco filtrado para ataque percusivo)
-            const bufferSize = audioContext.sampleRate * 0.05; 
-            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
-            const data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
-            
-            const noise = audioContext.createBufferSource();
-            noise.buffer = buffer;
-            const noiseFilter = audioContext.createBiquadFilter();
-            noiseFilter.type = 'bandpass';
-            noiseFilter.frequency.value = isMainBeat ? 2500 : (track === 'A' ? 1500 : 800);
-            
-            // Tono Oscilador (Cuerpo del sonido)
+            // Determinar la frecuencia base unificada, respetando alturas tonales para no arruinar polirritmias
+            let freq;
+            if (track === 'A') {
+                freq = isMainBeat ? 1500 : (isAccent ? 1000 : 600);
+            } else {
+                freq = isMainBeat ? 800 : (isAccent ? 500 : 300);
+            }
+
             const osc = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
-            const noiseGain = audioContext.createGain();
-            
-            if (track === 'A') {
-                osc.frequency.setValueAtTime(isMainBeat ? 1200 : (isAccent ? 800 : 600), time);
-                osc.frequency.exponentialRampToValueAtTime(isMainBeat ? 600 : (isAccent ? 400 : 300), time + 0.04);
-                osc.type = 'sine';
-            } else {
-                osc.frequency.setValueAtTime(isMainBeat ? 500 : (isAccent ? 350 : 200), time);
-                osc.frequency.exponentialRampToValueAtTime(isMainBeat ? 250 : (isAccent ? 150 : 100), time + 0.04);
-                osc.type = 'triangle'; 
-            }
-            
+
+            // Síntesis de "Woodblock" unificado (Golpe seco)
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, time);
+            osc.frequency.exponentialRampToValueAtTime(freq * 0.1, time + 0.05); // Caída rápida de afinación = Ataque percusivo
+
             let rawVol = track === 'B' ? volTrackB : (isAccent || isMainBeat ? volAccent : volNormal);
-            let dynamicVol = Math.pow(rawVol, 2); 
+            let dynamicVol = Math.pow(rawVol, 2);
 
-            // Envolvente de Ruido
-            noiseGain.gain.setValueAtTime(dynamicVol * 0.8, time);
-            noiseGain.gain.exponentialRampToValueAtTime(0.001, time + 0.02);
-
-            // Envolvente de Oscilador
             gainNode.gain.setValueAtTime(0, time);
-            gainNode.gain.linearRampToValueAtTime(dynamicVol, time + 0.002); 
+            gainNode.gain.linearRampToValueAtTime(dynamicVol, time + 0.002);
             
-            if (isTied) {
-                gainNode.gain.exponentialRampToValueAtTime(dynamicVol * 0.4, time + 0.06); 
-                gainNode.gain.setValueAtTime(dynamicVol * 0.4, time + duration - 0.02);
-                gainNode.gain.linearRampToValueAtTime(0.001, time + duration); 
-                osc.start(time); osc.stop(time + duration);
-            } else {
-                gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.08);
-                osc.start(time); osc.stop(time + 0.1);
-            }
+            // FÍSICA CORREGIDA: Un metrónomo NO TIENE SUSTAIN. 
+            // Las ligaduras solo extienden el espacio de silencio antes de la próxima nota,
+            // no mantienen un zumbido sintético antinatural.
+            gainNode.gain.exponentialRampToValueAtTime(0.001, time + 0.1);
 
-            noise.connect(noiseFilter); noiseFilter.connect(noiseGain); noiseGain.connect(audioContext.destination);
-            osc.connect(gainNode); gainNode.connect(audioContext.destination);
-            noise.start(time);
+            osc.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+
+            osc.start(time);
+            osc.stop(time + 0.15); // El sonido muere rápido siempre
         }
 
         function getDurationOfNote(bData, globalIdx, secondsPerBeat) {
@@ -1006,20 +997,25 @@
                     for(let i=0; i<beatsPerBar; i++){
                         const fDot = document.getElementById(`focus-dot-${i}`);
                         if(fDot) {
-                            if(i === beatNumber) fDot.classList.replace('bg-slate-800', 'bg-blue-500');
-                            else fDot.classList.replace('bg-blue-500', 'bg-slate-800');
+                            if(i === beatNumber) {
+                                fDot.classList.remove('bg-slate-800', 'border-slate-700', 'text-slate-500', 'scale-100');
+                                fDot.classList.add('bg-red-500', 'border-red-600', 'text-white', 'scale-110', 'shadow-[0_0_15px_rgba(239,68,68,0.5)]');
+                            } else {
+                                fDot.classList.add('bg-slate-800', 'border-slate-700', 'text-slate-500', 'scale-100');
+                                fDot.classList.remove('bg-red-500', 'border-red-600', 'text-white', 'scale-110', 'shadow-[0_0_15px_rgba(239,68,68,0.5)]');
+                            }
                         }
                     }
                     
-                    // Auto-Scroll Inteligente de la Pauta SVG
-                    if (!isFocusMode) {
+                    if (isFocusMode) {
+                        const targetDot = document.getElementById(`focus-dot-${beatNumber}`);
+                        smoothScrollContainer(simpleTracker, targetDot);
+                    } else {
                         const bgRect = document.getElementById(`playback-bg-${beatNumber}`);
                         if(bgRect) {
-                            // Centrar el compás actual en el contenedor
                             const scrollTarget = parseFloat(bgRect.getAttribute('x')) - (svgWrapper.clientWidth / 2) + (parseFloat(bgRect.getAttribute('width')) / 2);
                             svgWrapper.scrollTo({ left: scrollTarget, behavior: 'smooth' });
                             
-                            // Iluminar el fondo de reproducción
                             for(let i=0; i<beatsPerBar; i++){
                                 const bg = document.getElementById(`playback-bg-${i}`);
                                 if(bg) {
@@ -1089,7 +1085,10 @@
             
             for(let i=0; i<beatsPerBar; i++){
                 const fDot = document.getElementById(`focus-dot-${i}`);
-                if(fDot) fDot.classList.replace('bg-blue-500', 'bg-slate-800');
+                if(fDot) {
+                    fDot.classList.add('bg-slate-800', 'border-slate-700', 'text-slate-500', 'scale-100');
+                    fDot.classList.remove('bg-red-500', 'border-red-600', 'text-white', 'scale-110', 'shadow-[0_0_15px_rgba(239,68,68,0.5)]');
+                }
                 
                 const bg = document.getElementById(`playback-bg-${i}`);
                 if(bg) bg.setAttribute('fill', 'transparent');
@@ -1098,13 +1097,16 @@
 
         function renderSimpleTracker() {
             simpleTracker.innerHTML = '';
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex items-center gap-3 md:gap-5 w-max mx-auto px-4 min-h-[150px]';
             for(let i=0; i<beatsPerBar; i++){
                 const dot = document.createElement('div');
-                dot.className = `w-10 h-10 md:w-12 md:h-12 flex-shrink-0 rounded-full border-4 border-slate-700 bg-slate-800 transition-all duration-100 flex items-center justify-center font-bold text-slate-500`;
+                dot.className = `w-12 h-12 md:w-16 md:h-16 flex-shrink-0 rounded-full border-4 border-slate-700 bg-slate-800 transition-all duration-100 flex items-center justify-center font-black text-slate-500 text-lg md:text-2xl transform scale-100`;
                 dot.id = `focus-dot-${i}`;
                 dot.textContent = i+1;
-                simpleTracker.appendChild(dot);
+                wrapper.appendChild(dot);
             }
+            simpleTracker.appendChild(wrapper);
         }
 
         function initUI() {
